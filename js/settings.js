@@ -17,7 +17,7 @@ export function settingsPage(root, rerender) {
       <div class="seg inline" role="tablist">${['kg', 'lb'].map(u => `<button data-units="${u}" aria-selected="${u === units}">${u}</button>`).join('')}</div></div>
     <div class="setting"><div><div class="t">Export backup</div><div class="d">${esc(backupLine)} ${n} sets in total.</div></div>
       <button class="btn" id="export"${n ? '' : ' disabled'}>Export</button></div>
-    <div class="setting"><div><div class="t">Import backup</div><div class="d">Load a <code>workout-log-*.json</code> file exported from this app.</div></div>
+    <div class="setting"><div><div class="t">Import backup</div><div class="d">Load an <code>avs-gym-log-*.json</code> (or older <code>workout-log-*.json</code>) file exported from this app.</div></div>
       <label class="btn">Choose file<input type="file" id="import" accept="application/json,.json" hidden></label></div>
     <div class="setting"><div><div class="t">Clear all data</div><div class="d">Deletes every logged set from this browser. Export first.</div></div>
       <button class="btn danger" id="clear"${n ? '' : ' disabled'}>Clear</button></div>
@@ -58,6 +58,7 @@ export function aboutPage(root) {
       <li>Tap a muscle to see its exercises, ranked best first. Each shows its equipment and the other muscles it works.</li>
       <li>Tap an exercise for its guide, and to log weight and reps. On the body, primary muscles glow red, secondary ones amber, stabilisers grey.</li>
       <li>The plus button logs any exercise directly. Sets from the same day form one session in the Journal.</li>
+      <li>Reps count in halves. If the last rep fails partway, log it as .5 (for example 8.5); the set is marked Failure.</li>
       <li>Recovery view (in the menu) tints muscles by how recently and how hard you trained them: each primary set counts fully, each secondary set half, fading over 72 hours.</li>
     </ul>
     <h2>About the rankings</h2>
@@ -66,6 +67,7 @@ export function aboutPage(root) {
     <p>Anatomy model derived from <b>BodyParts3D</b>, &copy; The Database Center for Life Science, licensed under
       <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener">CC BY-SA 2.1 Japan</a>,
       via the per-part mirror by Kevin Moerman. The processed model (<code>assets/body.glb</code>) is shared under the same licence.</p>
+    <p>Exercise photos from <a href="https://github.com/yuhonas/free-exercise-db" target="_blank" rel="noopener">free-exercise-db</a>, released into the public domain (Unlicense). Where a photo shows a close variant of the exercise, the guide says so.</p>
     <p>3D rendering by <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> (MIT licence).</p>
   </div>`;
 }

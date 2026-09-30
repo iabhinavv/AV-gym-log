@@ -36,11 +36,16 @@ export function setPref(k, v) { db[k] = v; save(); }
 
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
-export function validSet(w, r) {
+// Rep counts may end in .5: a half rep marks the set as taken to failure.
+// Seconds and metres stay whole numbers.
+export function validSet(w, r, measure = 'reps') {
   if (!Number.isFinite(w) || w < 0 || w > 2000) return 'Weight must be 0 or more.';
-  if (!Number.isInteger(r) || r < 1 || r > 100000) return 'Enter a whole number of 1 or more.';
+  if (measure === 'reps') {
+    if (!Number.isInteger(r * 2) || r < 0.5 || r > 1000) return 'Reps must be 0.5 or more, in steps of 0.5.';
+  } else if (!Number.isInteger(r) || r < 1 || r > 100000) return 'Enter a whole number of 1 or more.';
   return null;
 }
+export const isFailure = s => s.r % 1 === 0.5;
 
 export function addSet(ex, w, r, note) {
   const s = { id: uid(), ex, ts: Date.now(), w, r };
@@ -137,10 +142,10 @@ export function recoveryScores(now = Date.now()) {
 export function exportData() {
   db.lastBackup = Date.now();
   save();
-  const blob = new Blob([JSON.stringify({ app: 'workout-log', ...db }, null, 1)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify({ app: 'avs-gym-log', ...db }, null, 1)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `workout-log-${dayKey(Date.now())}.json`;
+  a.download = `avs-gym-log-${dayKey(Date.now())}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -150,7 +155,7 @@ export function exportData() {
 export function parseImport(text) {
   let d;
   try { d = JSON.parse(text); } catch { throw new Error('That file is not valid JSON.'); }
-  if (!d || !Array.isArray(d.sets)) throw new Error('That file is not a Workout Log backup.');
+  if (!d || !Array.isArray(d.sets)) throw new Error('That file is not a gym log backup.');
   const sets = d.sets.filter(s => s && typeof s.id === 'string' && typeof s.ex === 'string'
     && Number.isFinite(s.ts) && Number.isFinite(s.w) && Number.isFinite(s.r));
   if (sets.length !== d.sets.length) throw new Error(`${d.sets.length - sets.length} sets in that file are malformed; nothing was imported.`);

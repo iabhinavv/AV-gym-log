@@ -187,6 +187,16 @@ export function createViewer(container, { onPick, onHover, onProgress, onEmptyDo
     flyTo(c.clone().add(dir.multiplyScalar(d)), c);
   }
 
+  // Turn the camera around its target (keyboard arrows).
+  function orbit(dTheta, dPhi) {
+    controls.autoRotate = false;
+    const off = camera.position.clone().sub(controls.target);
+    const sph = new THREE.Spherical().setFromVector3(off);
+    sph.theta += dTheta;
+    sph.phi = THREE.MathUtils.clamp(sph.phi + dPhi, controls.minPolarAngle, controls.maxPolarAngle);
+    flyTo(controls.target.clone().add(new THREE.Vector3().setFromSpherical(sph)), controls.target.clone(), 260);
+  }
+
   // Frame several groups at once (an exercise's primary and secondary muscles).
   function focusMany(ids, view = 'front') {
     const box = new THREE.Box3();
@@ -300,10 +310,10 @@ export function createViewer(container, { onPick, onHover, onProgress, onEmptyDo
   requestAnimationFrame(frame);
 
   return {
-    load, paint, focus, focusMany, frameBody: view => frameBody(false, view), pulse, setInsets,
+    load, paint, focus, focusMany, orbit, frameBody: view => frameBody(false, view), pulse, setInsets,
     stopAutoRotate: () => { controls.autoRotate = false; },
     groupIds: () => [...groups.keys()],
-    debug: { camera, controls, inset, groups, renderer, scene },
+    debug: { camera, controls, inset, groups, renderer, scene, get tween() { return tween; } },
   };
 }
 

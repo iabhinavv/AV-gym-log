@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Workout Log</title>
+<title>AV's Gym Log</title>
 <meta name="description" content="A workout log book built around a 3D anatomical muscle model.">
 <meta name="theme-color" content="#0B0D10">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Workout Log">
+<meta name="apple-mobile-web-app-title" content="AV's Gym Log">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
@@ -25,17 +25,17 @@
   <div id="stage-fallback" hidden></div>
 
   <div id="loader" role="status">
-    <div class="loader-title">Workout Log</div>
+    <div class="loader-title">AV's Gym Log</div>
     <div class="loader-bar"><span></span></div>
     <div class="loader-note">Loading anatomy model</div>
   </div>
 
   <header class="topbar">
-    <button class="icon-btn" id="btn-menu" aria-label="Open menu" aria-controls="drawer" aria-expanded="false">
+    <button class="icon-btn" id="btn-menu" title="Menu" aria-label="Open menu" aria-controls="drawer" aria-expanded="false">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
-    <div class="wordmark">Workout Log</div>
-    <button class="icon-btn" id="btn-add" aria-label="Log an exercise">
+    <div class="wordmark">AV's Gym Log</div>
+    <button class="icon-btn" id="btn-add" title="Log a set (N)" aria-label="Log an exercise">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
     </button>
   </header>
@@ -51,7 +51,7 @@
   <div id="scrim" class="scrim" hidden></div>
   <nav id="drawer" class="drawer" aria-label="Menu" aria-hidden="true">
     <div class="drawer-head">
-      <div class="drawer-title">Workout Log</div>
+      <div class="drawer-title">AV's Gym Log</div>
       <div class="drawer-sub" id="drawer-sub"></div>
     </div>
     <a href="#/" data-nav>Body</a>
@@ -65,6 +65,11 @@
     </label>
     <a href="#/settings" data-nav>Settings and Backup</a>
     <a href="#/about" data-nav>About and Credits</a>
+    <div class="drawer-keys" aria-hidden="true">
+      <div class="label">Keyboard</div>
+      <dl><dt>N</dt><dd>Log a set</dd><dt>/</dt><dd>Search</dd><dt>J P L</dt><dd>Journal, Progress, Library</dd>
+      <dt>B</dt><dd>Body</dd><dt>Arrows</dt><dd>Turn the body</dd><dt>R</dt><dd>Reset view</dd><dt>Esc</dt><dd>Close</dd></dl>
+    </div>
   </nav>
 
   <main id="page" class="page" hidden></main>

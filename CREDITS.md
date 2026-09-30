@@ -15,6 +15,13 @@ Source meshes were taken from the per-part STL mirror maintained by Kevin M. Moe
 
 As a derivative work, `assets/body.glb` is shared under the same CC BY-SA 2.1 JP licence.
 
+## Exercise photos
+
+`assets/exercises/*.jpg` come from free-exercise-db (https://github.com/yuhonas/free-exercise-db),
+released into the public domain under the Unlicense. They were resized to 600 px by
+`tools/fetch_images.py`. `data/exercise-images.js` records which source exercise each photo
+shows and notes any variant.
+
 ## Software
 
 three.js r169 (`vendor/three/`), (c) three.js authors, MIT licence. See `vendor/three/LICENSE`.

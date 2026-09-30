@@ -45,17 +45,30 @@ export function journalPage(root) {
   }).join('');
 
   const total = [...days.values()].length;
-  root.innerHTML = `<div class="page-inner">
+  const monthSets = inMonth.reduce((a, [, s]) => a + s.length, 0);
+  const monthVol = vols.reduce((a, v) => a + v, 0);
+  root.innerHTML = `<div class="page-inner wide">
     <h1>Journal</h1>
     <p class="lede">${total ? `${total} training ${total === 1 ? 'day' : 'days'} logged.` : 'Sessions appear here as you log sets. All sets logged on the same day make one session.'}</p>
-    <div class="cal-head">
-      <button class="btn small" id="prev">Previous</button>
-      <span class="month">${MONTHS[mo]} ${y}</span>
-      <button class="btn small" id="next">Next</button>
+    <div class="split">
+      <section>
+        <div class="cal-head">
+          <button class="btn small" id="prev">Previous</button>
+          <span class="month">${MONTHS[mo]} ${y}</span>
+          <button class="btn small" id="next">Next</button>
+        </div>
+        <div class="cal">${cells.join('')}</div>
+        <div class="tiles three">
+          <div class="tile"><div class="v">${inMonth.length}</div><div class="k">Sessions</div></div>
+          <div class="tile"><div class="v">${monthSets}</div><div class="k">Sets</div></div>
+          <div class="tile"><div class="v">${fmtVol(monthVol, units)}<small>${units}</small></div><div class="k">Volume</div></div>
+        </div>
+      </section>
+      <section>
+        <h2 class="split-h">Sessions in ${MONTHS[mo]}</h2>
+        ${monthSessions ? `<ul class="plain-list">${monthSessions}</ul>` : '<p class="empty">No sessions this month.</p>'}
+      </section>
     </div>
-    <div class="cal">${cells.join('')}</div>
-    <h2>Sessions in ${MONTHS[mo]}</h2>
-    ${monthSessions ? `<ul class="plain-list">${monthSessions}</ul>` : '<p class="empty">No sessions this month.</p>'}
   </div>`;
   $('#prev', root).onclick = () => { month = new Date(y, mo - 1, 1); journalPage(root); };
   $('#next', root).onclick = () => { month = new Date(y, mo + 1, 1); journalPage(root); };
@@ -81,7 +94,7 @@ export function sessionPage(root, k, rerender) {
       <ul class="sets">${list.map((x, i) => setRow(x, ex, i + 1)).join('')}</ul>
     </div>`;
   }).join('');
-  root.innerHTML = `<div class="page-inner">
+  root.innerHTML = `<div class="page-inner wide">
     <a class="btn small" href="#/journal">Journal</a>
     <h1 style="margin-top:16px">${esc(fmtDayLong(k))}</h1>
     <div class="tiles">
@@ -92,7 +105,7 @@ export function sessionPage(root, k, rerender) {
     </div>
     <div class="label">Muscles trained</div>
     <p style="margin:6px 0 10px">${s.muscles.map(m => `<span class="tag" style="margin:0 4px 4px 0">${esc(muscleName(m))}</span>`).join('')}</p>
-    ${blocks}
+    <div class="ex-grid">${blocks}</div>
   </div>`;
   bindSetEditing(root, rerender);
 }

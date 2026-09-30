@@ -69,7 +69,16 @@ for m in muscles:
 for m in model - set(muscles):
     errors.append(f'model group {m} is not in js/muscles.js')
 
+img_src = read('data/exercise-images.js')
+photo_ids = re.findall(r'^ "([a-z0-9-]+)": \{', img_src, re.M)
+for eid in photo_ids:
+    if eid not in exercises:
+        errors.append(f'exercise-images.js: unknown exercise {eid}')
+    for i in (0, 1):
+        if not os.path.exists(os.path.join(ROOT, 'assets', 'exercises', f'{eid}-{i}.jpg')):
+            errors.append(f'missing photo assets/exercises/{eid}-{i}.jpg')
+
 if errors:
     print('\n'.join(errors))
     sys.exit(1)
-print(f'ok: {len(exercises)} exercises, {len(muscles)} muscle groups, all present in body.glb')
+print(f'ok: {len(exercises)} exercises, {len(muscles)} muscle groups, all present in body.glb; {len(photo_ids)} with photos')

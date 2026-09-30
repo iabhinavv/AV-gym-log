@@ -10,15 +10,25 @@ export function progressList(root) {
   const rows = ids.map(id => {
     const ex = EX[id], st = store.exerciseStats(id);
     const best = measure(ex) === 'reps' && st.bestE ? `e1RM ${trim(toDisplayW(st.bestE, units))} ${units}` : `Best ${fmtSet(st.best, ex, units)}`;
-    return `<li onclick="location.hash='#/progress/${id}'"><span>${esc(ex.name)}
+    const pts = st.series.map(d => (measure(ex) === 'reps' && d.e1rm ? d.e1rm : d.top));
+    return `<li class="prog-row" onclick="location.hash='#/progress/${id}'"><span>${esc(ex.name)}
         <div class="sub">${st.series.length} ${st.series.length === 1 ? 'session' : 'sessions'} · last ${esc(relDay(dayKey(st.last.ts)).toLowerCase())}</div></span>
+      ${spark(pts.slice(-12))}
       <span class="right">${esc(best)}<div class="sub">${esc(fmtSet(st.last, ex, units))}</div></span></li>`;
   }).join('');
-  root.innerHTML = `<div class="page-inner">
+  root.innerHTML = `<div class="page-inner wide">
     <h1>Progress</h1>
     <p class="lede">Every exercise you have logged, most recent first.</p>
-    ${rows ? `<ul class="plain-list">${rows}</ul>` : '<p class="empty">Nothing logged yet. Tap a muscle on the body, pick an exercise and log a set.</p>'}
+    ${rows ? `<ul class="plain-list prog-list">${rows}</ul>` : '<p class="empty">Nothing logged yet. Tap a muscle on the body, pick an exercise and log a set.</p>'}
   </div>`;
+}
+
+// Tiny trend line of the last sessions (e1RM, or best hold/distance/reps).
+function spark(v) {
+  if (v.length < 2) return '<span class="spark"></span>';
+  const w = 96, h = 26, lo = Math.min(...v), hi = Math.max(...v), r = hi - lo || 1;
+  const pts = v.map((y, i) => `${((i / (v.length - 1)) * (w - 4) + 2).toFixed(1)},${(h - 3 - ((y - lo) / r) * (h - 6)).toFixed(1)}`).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts}"/></svg>`;
 }
 
 export function progressPage(root, id, openExercise) {
@@ -41,20 +51,26 @@ export function progressPage(root, id, openExercise) {
   const history = [...st.series].reverse().map(d => `<li onclick="location.hash='#/journal/${d.k}'"><span>${esc(fmtDay(d.k))}
       <div class="sub">${d.sets.map(s => esc(fmtSet(s, ex, units))).join(', ')}</div></span>
       <span class="right">${isReps && d.e1rm ? `${trim(toDisplayW(d.e1rm, units))} ${units}` : ''}<div class="sub">${d.vol ? fmtVol(d.vol, units) + ' ' + units : ''}</div></span></li>`).join('');
-  root.innerHTML = `<div class="page-inner">${head}
+  root.innerHTML = `<div class="page-inner wide">${head}
     <div class="tiles">
       <div class="tile"><div class="v">${esc(fmtSet(st.best, ex, units))}</div><div class="k">Best set</div></div>
       ${isReps && st.bestE ? `<div class="tile"><div class="v">${trim(toDisplayW(st.bestE, units))}<small>${units}</small></div><div class="k">Est. 1RM (Epley)</div></div>` : ''}
       <div class="tile"><div class="v">${st.series.length}</div><div class="k">Sessions</div></div>
       ${totalVol ? `<div class="tile"><div class="v">${fmtVol(totalVol, units)}<small>${units}</small></div><div class="k">Total volume</div></div>` : ''}
     </div>
-    <h2>Trend</h2>
-    <div class="label">${esc(yLabel)}</div>
-    ${lineChart(series)}
-    ${series.some(s => s.vol) ? `<h2>Volume per session</h2><div class="label">${units} lifted (weight × reps)</div>${barChart(series)}` : ''}
-    <div class="row-actions" style="margin-top:14px"><button class="btn primary" id="open-ex">Log this exercise</button></div>
-    <h2>History</h2>
-    <ul class="plain-list">${history}</ul>
+    <div class="split">
+      <section>
+        <h2 class="split-h">Trend</h2>
+        <div class="label">${esc(yLabel)}</div>
+        ${lineChart(series)}
+        ${series.some(s => s.vol) ? `<h2>Volume per session</h2><div class="label">${units} lifted (weight × reps)</div>${barChart(series)}` : ''}
+        <div class="row-actions" style="margin-top:14px"><button class="btn primary" id="open-ex">Log this exercise</button></div>
+      </section>
+      <section>
+        <h2 class="split-h">History</h2>
+        <ul class="plain-list">${history}</ul>
+      </section>
+    </div>
   </div>`;
   root.querySelector('#open-ex').onclick = () => openExercise(id);
 }

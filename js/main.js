@@ -11,6 +11,7 @@ import { settingsPage, aboutPage } from './settings.js';
 const page = $('#page'), drawer = $('#drawer'), scrim = $('#scrim');
 let viewer = null;
 let pageDirty = false;
+let previewEx = null;   // exercise hovered in a muscle list (mouse only)
 
 store.load();
 
@@ -72,14 +73,15 @@ function repaint() {
   $('#recovery-legend').hidden = !rec || !viewer || !!sheets.top() || !page.hidden;
   if (!viewer) return;
   const v = sheets.top();
-  if (v?.type === 'muscle') viewer.paint({ focus: v.id });
-  else if (v?.type === 'exercise') {
-    const ex = EX[v.id], roles = {};
+  const exId = v?.type === 'exercise' ? v.id : previewEx;
+  if (exId && EX[exId]) {
+    const ex = EX[exId], roles = {};
     ex.st.forEach(m => (roles[m] = 'st'));
     ex.s.forEach(m => (roles[m] = 's'));
     ex.p.forEach(m => (roles[m] = 'p'));
     viewer.paint({ roles });
-  } else viewer.paint(rec ? { recovery: store.recoveryScores() } : {});
+  } else if (v?.type === 'muscle') viewer.paint({ focus: v.id });
+  else viewer.paint(rec ? { recovery: store.recoveryScores() } : {});
 }
 
 function onSheetChange(v) {
@@ -100,6 +102,7 @@ function onSheetChange(v) {
 sheets.initSheets({
   onChange: onSheetChange,
   onInsets: i => viewer?.setInsets(i),
+  onPreview: id => { previewEx = id; repaint(); },
   onLogged: ex => { viewer?.pulse([...ex.p]); repaint(); updateDrawerSub(); },
 });
 
@@ -156,20 +159,54 @@ function route() {
   if (!name || !pages[name]) {
     page.hidden = true;
     page.replaceChildren();
-    document.title = 'Workout Log';
+    document.title = "AV's Gym Log";
   } else {
     pages[name]();
     const wasHidden = page.hidden;
     page.replaceChildren(el);
     page.hidden = false;
     if (wasHidden) page.scrollTop = 0;
-    document.title = `${name[0].toUpperCase() + name.slice(1)} · Workout Log`;
+    document.title = `${name[0].toUpperCase() + name.slice(1)} · AV's Gym Log`;
   }
   page.classList.toggle('receded', sheets.isOpen() && !page.hidden);
   repaint();
 }
 addEventListener('hashchange', () => { page.scrollTop = 0; route(); });
 store.onChange(() => { if (!page.hidden) { if (sheets.isOpen()) pageDirty = true; else route(); } updateDrawerSub(); });
+
+// ------------------------------------------------------------ keyboard (laptops)
+// N log a set, / search, J journal, P progress, L library, B body, R reset view,
+// arrows turn the model, Esc closes the sheet, then the drawer, then the page.
+addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const typing = e.target.closest?.('input, textarea, select, [contenteditable]');
+  if (e.key === 'Escape') {
+    if (typing) { e.target.blur(); return; }
+    if (sheets.isOpen() || drawer.classList.contains('open')) return;   // handled by their own listeners
+    if (!page.hidden) location.hash = '#/';
+    return;
+  }
+  if (typing) return;
+  const k = e.key.toLowerCase();
+  const go = h => { e.preventDefault(); sheets.close(); setDrawer(false); location.hash = h; };
+  if (k === 'n') { e.preventDefault(); $('#btn-add').click(); }
+  else if (k === '/') {
+    e.preventDefault();
+    const s = $('#q') || $('#lib-q');
+    if (s) s.focus(); else $('#btn-add').click();
+  }
+  else if (k === 'j') go('#/journal');
+  else if (k === 'p') go('#/progress');
+  else if (k === 'l') go('#/library');
+  else if (k === 'b') go('#/');
+  else if (k === 'r' && page.hidden) { sheets.close(); viewer?.frameBody(); }
+  else if (e.key.startsWith('Arrow') && page.hidden && viewer) {
+    e.preventDefault();
+    const step = 0.35;
+    viewer.orbit(e.key === 'ArrowLeft' ? -step : e.key === 'ArrowRight' ? step : 0,
+                 e.key === 'ArrowUp' ? -0.15 : e.key === 'ArrowDown' ? 0.15 : 0);
+  }
+}, true);   // capture: runs before the sheet and drawer close themselves on Esc
 
 // Recovery fades continuously; refresh the tint every few minutes while the app is open.
 setInterval(() => { if (store.get('recovery') && !sheets.isOpen()) repaint(); }, 5 * 60e3);

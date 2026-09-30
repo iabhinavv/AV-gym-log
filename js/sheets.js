@@ -8,12 +8,14 @@ import {
   toDisplayW, fromDisplayW, fmtSet, fmtW, trim, e1rm, dayKey, fmtDay, relDay, fmtTime, esc, $, $$, toast,
 } from './lib.js';
 import { RANKINGS } from '../data/exercises.js';
+import { IMAGES } from '../data/exercise-images.js';
 
 const sheet = $('#sheet'), body = $('#sheet-body'), kicker = $('#sheet-kicker');
 const btnBack = $('#sheet-back'), btnClose = $('#sheet-close'), grip = $('#sheet-grip');
 const desktop = matchMedia('(min-width: 900px)');
 
 let stack = [];
+let previewRow = null;
 let hooks = {};
 let height = 'half';         // phone only: 'half' | 'full'
 
@@ -63,10 +65,12 @@ function render(back = false) {
   const v = top();
   sheet.classList.toggle('open', !!v);
   sheet.setAttribute('aria-hidden', v ? 'false' : 'true');
-  if (!v) { reportInsets(); hooks.onChange?.(null); return; }
+  if (!v) { stopDemo(); reportInsets(); hooks.onChange?.(null); return; }
   setHeight(height);
   btnBack.hidden = stack.length < 2;
   const html = v.type === 'muscle' ? muscleView(v) : v.type === 'exercise' ? exerciseView(v) : quickView(v);
+  stopDemo();
+  if (previewRow) { previewRow = null; hooks.onPreview?.(null); }
   body.innerHTML = `<div class="view${back ? ' back' : ''}">${html}</div>`;
   body.scrollTop = 0;
   bind(v);
@@ -156,12 +160,59 @@ function guideHTML(ex) {
   const ranks = Object.entries(RANKINGS).filter(([, ids]) => ids.includes(ex.id))
     .map(([m, ids]) => `#${ids.indexOf(ex.id) + 1} for ${muscleName(m)}`);
   return `<div class="guide">
+    ${demoHTML(ex)}
     ${ranks.length ? `<p style="font-size:13px">Ranked ${esc(ranks.join(', '))}.</p>` : ''}
     <h4 class="label">Setup</h4><p>${esc(ex.setup)}</p>
     <h4 class="label">How to do it</h4><ol>${ex.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
     <h4 class="label">Common mistakes</h4><ul>${ex.mistakes.map(s => `<li>${esc(s)}</li>`).join('')}</ul>
     <h4 class="label">Breathing</h4><p>${esc(ex.breathe)}</p>
   </div>`;
+}
+
+// Two photos that crossfade on a loop: the start position and the halfway point where the rep turns
+// around (bottom of a press, top of a curl). The buttons pick a frame and pause.
+function demoHTML(ex) {
+  const img = IMAGES[ex.id];
+  if (!img) return `<p class="demo-none">No photo for this exercise yet. The steps below cover it.</p>`;
+  const alt = n => `${esc(ex.name)}, ${n} position`;
+  return `<figure class="demo" id="demo">
+      <div class="demo-stage">
+        <img src="assets/exercises/${ex.id}-0.jpg" alt="${alt('start')}" decoding="async">
+        <img src="assets/exercises/${ex.id}-1.jpg" alt="${alt('halfway')}" decoding="async" class="f1">
+        <span class="demo-step" id="demo-step">1 · Start</span>
+      </div>
+      <div class="demo-bar">
+        <button class="chip" data-frame="0" aria-pressed="true">Start</button>
+        <button class="chip" data-frame="1" aria-pressed="false">Halfway</button>
+        <button class="chip" id="demo-play">${reducedMotion() ? 'Play' : 'Pause'}</button>
+      </div>
+      ${img.note ? `<figcaption class="demo-note">${esc(img.note)}</figcaption>` : ''}
+    </figure>`;
+}
+
+let demoTimer = 0;
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+function stopDemo() { clearInterval(demoTimer); demoTimer = 0; }
+function bindDemo() {
+  stopDemo();
+  const fig = $('#demo', body);
+  if (!fig) return;
+  let frame = 0;
+  const show = f => {
+    frame = f;
+    fig.classList.toggle('at-1', f === 1);
+    $('#demo-step', fig).textContent = f ? '2 · Halfway' : '1 · Start';
+    $$('[data-frame]', fig).forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.frame) === f)));
+  };
+  const play = () => { stopDemo(); demoTimer = setInterval(() => show(1 - frame), 1600); $('#demo-play', fig).textContent = 'Pause'; };
+  const pause = () => { stopDemo(); $('#demo-play', fig).textContent = 'Play'; };
+  fig.addEventListener('click', e => {
+    const f = e.target.closest('[data-frame]');
+    if (f) { pause(); show(Number(f.dataset.frame)); return; }
+    if (e.target.closest('#demo-play')) demoTimer ? pause() : play();
+    else if (e.target.closest('.demo-stage')) { pause(); show(1 - frame); }
+  });
+  if (!reducedMotion()) play();
 }
 
 function historyHTML(ex) {
@@ -196,13 +247,14 @@ function logHTML(ex) {
           <input id="in-w" type="number" inputmode="decimal" step="any" min="0" value="${trim(toDisplayW(d.w, units))}">
           <button type="button" data-step="w" data-d="1" aria-label="More weight">+</button></div></div>
         <div class="field"><span class="label">${measureLabel(ex)}</span>
-          <div class="stepper"><button type="button" data-step="r" data-d="-1" aria-label="Less">&minus;</button>
-          <input id="in-r" type="number" inputmode="numeric" step="1" min="1" value="${d.r}">
-          <button type="button" data-step="r" data-d="1" aria-label="More">+</button></div></div>
+          <div class="stepper"><button type="button" data-step="r" data-d="-1" aria-label="Fewer ${measureLabel(ex).toLowerCase()}">&minus;</button>
+          <input id="in-r" type="number" inputmode="${m === 'reps' ? 'decimal' : 'numeric'}" step="${m === 'reps' ? 0.5 : 1}" min="${m === 'reps' ? 0.5 : 1}" value="${d.r}">
+          <button type="button" data-step="r" data-d="1" aria-label="More ${measureLabel(ex).toLowerCase()}">+</button></div></div>
       </div>
       <textarea id="in-note" class="note-input" rows="1" placeholder="Note (optional)"></textarea>
       <div class="form-err" id="log-err" role="alert"></div>
       <button class="btn primary block" id="btn-log">Log set</button>
+      ${m === 'reps' ? '<p class="form-hint">Reps go up in halves. End on .5 when the last rep failed partway; the set is marked Failure.</p>' : ''}
     </div>
     <div class="label" style="margin-top:18px">Today</div>
     <ul class="sets" id="today-sets">${today.length ? today.map((s, i) => setRow(s, ex, i + 1)).join('') : '<li class="empty">No sets yet today.</li>'}</ul>
@@ -222,13 +274,13 @@ export function setRow(s, ex, n, editing = false) {
   const units = store.get('units');
   if (editing) return `<li class="set-row" data-set="${s.id}"><div class="set-edit">
       <input data-f="w" type="number" inputmode="decimal" step="any" min="0" value="${trim(toDisplayW(s.w, units))}" aria-label="Weight">
-      <input data-f="r" type="number" inputmode="numeric" step="1" min="1" value="${s.r}" aria-label="${measureLabel(ex)}">
+      <input data-f="r" type="number" inputmode="decimal" step="${measure(ex) === 'reps' ? 0.5 : 1}" min="0.5" value="${s.r}" aria-label="${measureLabel(ex)}">
       <textarea data-f="note" class="note-input" rows="1" placeholder="Note">${esc(s.note || '')}</textarea>
       <div class="row-actions"><button class="btn small primary" data-act="save">Save</button><button class="btn small" data-act="cancel">Cancel</button><button class="btn small danger" data-act="del">Remove</button></div>
     </div></li>`;
   return `<li class="set-row" data-set="${s.id}">
       <span class="n">Set ${n}</span>
-      <span class="v">${esc(fmtSet(s, ex, units))}<small>${fmtTime(s.ts)}</small></span>
+      <span class="v">${esc(fmtSet(s, ex, units))}${measure(ex) === 'reps' && store.isFailure(s) ? '<span class="tag fail">Failure</span>' : ''}<small>${fmtTime(s.ts)}</small></span>
       <button class="text-btn" data-act="edit">Edit</button>
       ${s.note ? `<span class="note">${esc(s.note)}</span>` : ''}
     </li>`;
@@ -252,7 +304,7 @@ export function bindSetEditing(root, rerender) {
     } else if (act === 'save') {
       const w = fromDisplayW(parseFloat($('[data-f="w"]', li).value || '0'), units);
       const r = Number($('[data-f="r"]', li).value);
-      const err = store.validSet(w, r);
+      const err = store.validSet(w, r, measure(ex));
       if (err) { toast(err); return; }
       store.updateSet(s.id, { w: Math.round(w * 1000) / 1000, r, note: $('[data-f="note"]', li).value.trim() });
       toast('Set updated');
@@ -319,16 +371,26 @@ function bind(v) {
     if (tab) {
       v.tab = tab.dataset.tab;
       $$('[data-tab]', body).forEach(b => b.setAttribute('aria-selected', b === tab));
+      stopDemo();
       $('#tab-body').innerHTML = tabBody(EX[v.id], v.tab);
       if (v.tab === 'log') bindLog(v);
+      if (v.tab === 'guide') bindDemo();
       return;
     }
   };
+  // Mouse hover over an exercise row previews its muscles on the model.
+  body.onpointerover = e => {
+    if (e.pointerType !== 'mouse') return;
+    const row = e.target.closest('.ex-row, #q-results [data-ex]');
+    if (row !== previewRow) { previewRow = row; hooks.onPreview?.(row?.dataset.ex || null); }
+  };
+  body.onpointerleave = () => { if (previewRow) { previewRow = null; hooks.onPreview?.(null); } };
   body.onkeydown = e => {
     if (e.key === 'Enter' && e.target.matches('[data-ex][tabindex]')) e.target.click();
   };
   if (v.type === 'exercise') {
     bindLog(v);
+    if (v.tab === 'guide') bindDemo();
     if (!body.dataset.editBound) { bindSetEditing(body, () => refreshLogPanelForce()); body.dataset.editBound = '1'; }
   }
   if (v.type === 'quick') {
@@ -351,18 +413,18 @@ function bindLog(v) {
   if (!form) return;
   const units = store.get('units'), m = measure(ex);
   const wIn = $('#in-w'), rIn = $('#in-r'), err = $('#log-err'), btn = $('#btn-log');
-  const wStep = units === 'lb' ? 5 : 2.5, rStep = m === 'reps' ? 1 : 5;
+  const wStep = units === 'lb' ? 5 : 2.5, rStep = m === 'reps' ? 0.5 : 5;
   form.addEventListener('click', e => {
     const s = e.target.closest('[data-step]');
     if (!s) return;
     const d = Number(s.dataset.d);
     if (s.dataset.step === 'w') wIn.value = trim(Math.max(0, (parseFloat(wIn.value) || 0) + d * wStep));
-    else rIn.value = Math.max(1, (parseInt(rIn.value, 10) || 0) + d * rStep);
+    else rIn.value = trim(Math.max(rStep === 0.5 ? 0.5 : 1, (parseFloat(rIn.value) || 0) + d * rStep));
   });
   btn.addEventListener('click', () => {
     const w = fromDisplayW(parseFloat(wIn.value || '0'), units);
     const r = Number(rIn.value);
-    const msg = store.validSet(w, r);
+    const msg = store.validSet(w, r, m);
     err.textContent = msg || '';
     if (msg) return;
     const note = $('#in-note').value.trim();

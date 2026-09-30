@@ -1,4 +1,4 @@
-# Workout Log
+# AV's Gym Log
 
 A workout log book built around a 3D anatomical muscle model. Tap a muscle to see its
 exercises ranked best first. Each exercise lists its equipment, a how-to guide and the
@@ -28,6 +28,11 @@ on localhost, so development never serves stale files.
   - Drag to turn, pinch or scroll to zoom, double-tap empty space to reset the view.
   - Tapping a muscle moves the camera to it and opens its ranked exercise list.
 - **Exercise sheet**: has three tabs, Log, Guide and History.
+  - The Guide opens with two public-domain photos crossfading on a loop: the start and the
+    halfway point where the rep turns around. They come from free-exercise-db, and 107 of the
+    119 exercises have them. A photo showing a close variant carries a note saying so.
+  - Reps step in halves. A set ending in .5 means the last rep failed partway, and it is
+    tagged Failure. Seconds and metres stay whole numbers.
   - The body lights the exercise's muscles: primary red, secondary amber, stabilisers grey.
   - The camera frames those muscles.
 - **Journal**: a month calendar. Each day's sets form one session. Session pages allow
@@ -40,6 +45,19 @@ on localhost, so development never serves stale files.
   - Each set fades linearly over 72 hours, and 6 fresh sets count as full.
 - **Settings and Backup**: kg/lb (stored in kg), export, import (merge or replace),
   clear all data.
+
+## On a laptop
+
+- From 1024 px wide, the pages use two columns:
+  - Journal: the calendar and month totals sit beside the session list.
+  - Progress: each exercise page puts its charts beside its history, and the list shows a
+    trend line per exercise.
+  - Library: a sticky filter sidebar sits beside a grid of photo cards.
+- The exercise panel widens to 480 px (1280 px screens) and 540 px (1600 px).
+- Hovering an exercise in a muscle's list previews its muscles on the model.
+- Keyboard: N log a set, / search, J/P/L Journal/Progress/Library, B body, arrows turn the
+  body, R reset view, Esc close. The shortcuts are listed at the bottom of the menu on
+  screens that have a mouse.
 
 ## Files
 
@@ -56,7 +74,9 @@ on localhost, so development never serves stale files.
 | `assets/body.glb` | The processed anatomy model (2 MB, about 200k triangles). |
 | `vendor/three/` | three.js r169 and the addons used, kept locally so the app works offline. |
 | `tools/build_model.py` | Rebuilds `body.glb` from BodyParts3D. |
-| `tools/check_data.py` | Validates exercises against the muscle list and the model. |
+| `tools/check_data.py` | Validates exercises against the muscle list and the model, and checks the photos exist. |
+| `tools/fetch_images.py` | Downloads and shrinks the exercise photos, and writes `data/exercise-images.js`. Edit its `MAP` to add or fix a photo. |
+| `assets/exercises/` | `<id>-0.jpg` (start) and `<id>-1.jpg` (halfway), 600 px wide, about 8 MB in all. The service worker caches each one when it is first viewed. |
 
 ## Editing the exercise data
 

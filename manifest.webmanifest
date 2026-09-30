@@ -1,6 +1,6 @@
 {
-  "name": "Workout Log",
-  "short_name": "Workout Log",
+  "name": "AV's Gym Log",
+  "short_name": "AV's Gym Log",
   "description": "A workout log book built around a 3D anatomical muscle model.",
   "start_url": "./",
   "scope": "./",
