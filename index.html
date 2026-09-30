@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Workout Log</title>
+<meta name="description" content="A workout log book built around a 3D anatomical muscle model.">
+<meta name="theme-color" content="#0B0D10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Workout Log">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="stylesheet" href="css/app.css">
+<script type="importmap">
+{ "imports": {
+    "three": "./vendor/three/three.module.min.js",
+    "three/addons/": "./vendor/three/addons/"
+} }
+</script>
+</head>
+<body>
+  <div id="stage" aria-label="3D muscle model. Tap a muscle to see its exercises."></div>
+  <div id="stage-fallback" hidden></div>
+
+  <div id="loader" role="status">
+    <div class="loader-title">Workout Log</div>
+    <div class="loader-bar"><span></span></div>
+    <div class="loader-note">Loading anatomy model</div>
+  </div>
+
+  <header class="topbar">
+    <button class="icon-btn" id="btn-menu" aria-label="Open menu" aria-controls="drawer" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <div class="wordmark">Workout Log</div>
+    <button class="icon-btn" id="btn-add" aria-label="Log an exercise">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </header>
+
+  <div id="hover-label" class="hover-label" hidden></div>
+  <div id="hint" class="hint">Tap a muscle</div>
+  <div id="recovery-legend" class="recovery-legend" hidden>
+    <span class="lbl">Recovery</span>
+    <span class="grad"></span>
+    <span class="ends"><span>Fresh</span><span>Just trained</span></span>
+  </div>
+
+  <div id="scrim" class="scrim" hidden></div>
+  <nav id="drawer" class="drawer" aria-label="Menu" aria-hidden="true">
+    <div class="drawer-head">
+      <div class="drawer-title">Workout Log</div>
+      <div class="drawer-sub" id="drawer-sub"></div>
+    </div>
+    <a href="#/" data-nav>Body</a>
+    <a href="#/journal" data-nav>Journal</a>
+    <a href="#/progress" data-nav>Progress</a>
+    <a href="#/library" data-nav>Exercise Library</a>
+    <label class="drawer-switch">
+      <span>Recovery view</span>
+      <input type="checkbox" id="recovery-toggle" role="switch">
+      <span class="switch" aria-hidden="true"></span>
+    </label>
+    <a href="#/settings" data-nav>Settings and Backup</a>
+    <a href="#/about" data-nav>About and Credits</a>
+  </nav>
+
+  <main id="page" class="page" hidden></main>
+
+  <section id="sheet" class="sheet" aria-hidden="true">
+    <div class="sheet-grip" id="sheet-grip"><span></span></div>
+    <div class="sheet-bar">
+      <button class="text-btn" id="sheet-back" hidden>Back</button>
+      <span class="sheet-kicker" id="sheet-kicker"></span>
+      <button class="text-btn" id="sheet-close">Close</button>
+    </div>
+    <div class="sheet-body" id="sheet-body"></div>
+  </section>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
