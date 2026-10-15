@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Bake muscle images</title>
+<!-- Renders assets/muscles/<muscle>-<status>.webp for every muscle group and status colour.
+     Run through tools/bake_muscles.py, which serves this page and accepts the uploads. -->
+<script type="importmap">{ "imports": { "three": "../vendor/three/three.module.min.js", "three/addons/": "../vendor/three/addons/" } }</script>
+<script src="../reports/palette.js"></script>
+<style>body { background: #0B0D10; color: #ECE7DF; font: 14px system-ui; margin: 20px; } #stage { width: 480px; height: 360px; }</style>
+</head>
+<body>
+<p id="log">Loading model</p>
+<div id="stage"></div>
+<script type="module">
+import { createViewer } from '../js/viewer.js';
+import { MUSCLES } from '../js/muscles.js';
+
+// Framing per muscle: arms are shown one side only so the muscle fills the picture.
+const SINGLE = new Set(['biceps', 'triceps', 'forearms']);
+const log = t => (document.getElementById('log').textContent = t);
+const viewer = createViewer(document.getElementById('stage'), {});
+viewer.debug.controls.autoRotate = false;
+await viewer.load('../assets/body.glb');
+let n = 0;
+const statuses = window.GYM_STATUS_ORDER;
+for (const m of MUSCLES) {
+  for (const st of statuses) {
+    const url = viewer.snapshot([m.id], { colors: { [m.id]: window.GYM_STATUS[st].color } },
+      { view: m.view, single: SINGLE.has(m.id), w: 420, h: 315, margin: m.view === 'side' ? 1.5 : 1.3 });
+    const png = await (await fetch(url)).blob();
+    const bmp = await createImageBitmap(png);
+    const c = new OffscreenCanvas(bmp.width, bmp.height);
+    c.getContext('2d').drawImage(bmp, 0, 0);
+    const webp = await c.convertToBlob({ type: 'image/webp', quality: 0.82 });
+    const res = await fetch(`/save/assets/muscles/${m.id}-${st}.webp`, { method: 'PUT', body: webp });
+    if (!res.ok) { log(`Save failed for ${m.id}-${st}: ${res.status}`); throw new Error('save failed'); }
+    log(`Saved ${++n} of ${MUSCLES.length * statuses.length}: ${m.id}-${st}`);
+  }
+}
+log(`Done: ${n} images in assets/muscles/`);
+document.title = 'Done';
+</script>
+</body>
+</html>

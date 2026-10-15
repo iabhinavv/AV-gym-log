@@ -8,9 +8,9 @@ import { MUSCLE } from './muscles.js';
 const C = hex => new THREE.Color(hex);
 const COL = {
   base: C('#9E3129'), ctx: C('#86302A'), bone: C('#D6CAB6'), tendon: C('#CDBFA8'),
-  select: C('#E8583F'), dim: C('#1C1111'), ctxDim: C('#170F0E'), boneDim: C('#3A3631'), tendonDim: C('#322E2A'),
-  p: C('#E8583F'), s: C('#D08A45'), st: C('#8E8175'),
-  recCtx: C('#2B2E33'), recBone: C('#4C4944'),
+  select: C('#E8583F'), dim: C('#222932'), ctxDim: C('#1B2027'), boneDim: C('#3A3D42'), tendonDim: C('#30343A'),
+  p: C('#E8583F'), s: C('#E3A857'), st: C('#6F7F96'),
+  recCtx: C('#252C36'), recBone: C('#4A4D52'),
 };
 const EMI = { none: C('#000000'), select: C('#5A140C'), hover: C('#3A1008'), p: C('#4A1209'), pulse: C('#F0A060') };
 const REC_STOPS = [[0, C('#56606E')], [0.3, C('#B8904E')], [0.65, C('#F08A3C')], [1, C('#F2472E')]];
@@ -237,20 +237,27 @@ export function createViewer(container, { onPick, onHover, onProgress, onEmptyDo
       else col = COL.base;
       u.color.copy(col);
       u.emissive.copy(emi);
-      u.sheen = col === COL.dim || col === COL.ctxDim ? u.sheen0 * 0.2 : u.sheen0;
+      u.sheen = col === COL.dim || col === COL.ctxDim || col === COL.recCtx ? u.sheen0 * 0.15 : u.sheen0;
     }
   }
-  // Report helpers ------------------------------------------------------------
   // Render a still of some groups (or the whole body) with the given paint spec, at w x h,
   // and return a PNG data URL. Camera, size and colours are restored before returning.
-  function snapshot(ids, paintSpec, { view = 'front', w = 480, h = 360, margin = 1.25 } = {}) {
+  // Used by tools/bake-muscles.html to make the per-muscle images the strength report shows.
+  // view: 'front' | 'back' | 'side'. single: frame only one side's mesh (arms, side views).
+  function snapshot(ids, paintSpec, { view = 'front', w = 480, h = 360, margin = 1.25, single = false } = {}) {
     const saved = { pos: camera.position.clone(), target: controls.target.clone(), spec,
                     size: renderer.getSize(new THREE.Vector2()), pr: renderer.getPixelRatio() };
     const box = new THREE.Box3();
-    (ids && ids.length ? ids : [...groups.keys()]).forEach(id => (groups.get(id) || []).forEach(m => box.expandByObject(m)));
+    const centerX = m => new THREE.Box3().setFromObject(m).getCenter(new THREE.Vector3()).x;
+    (ids && ids.length ? ids : [...groups.keys()]).forEach(id => {
+      let ms = groups.get(id) || [];
+      if ((single || view === 'side') && ms.length > 1) ms = [ms.reduce((a, b) => (centerX(b) > centerX(a) ? b : a))];
+      ms.forEach(m => box.expandByObject(m));
+    });
     if (!ids || !ids.length) box.copy(bodyBox);
     const c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
-    const dir = (VIEW[view] || VIEW.front).clone().normalize();
+    const dir = (view === 'side' ? new THREE.Vector3(1, 0.08, 0.35) : (VIEW[view] || VIEW.front).clone()).normalize();
+    if (view === 'side') size.x = size.z;   // seen from the side, depth becomes the width
     const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
     const ex = Math.max(size.x, 0.3) * margin, ey = Math.max(size.y, 0.3) * margin;
     const d = Math.max(ey / 2 / t, ex / 2 / (t * (w / h)));
@@ -284,28 +291,6 @@ export function createViewer(container, { onPick, onHover, onProgress, onEmptyDo
     renderer.render(scene, camera);
     return url;
   }
-
-  // Where a group's visible surface sits on screen (CSS px within the container), or null when
-  // the group faces away or is hidden behind something else. Picks the side nearer the camera.
-  const tmpV = new THREE.Vector3();
-  function screenOf(id) {
-    const meshes = groups.get(id);
-    if (!meshes) return null;
-    let best = null;
-    for (const m of meshes) {
-      const c = new THREE.Box3().setFromObject(m).getCenter(new THREE.Vector3());
-      const dist = c.distanceTo(camera.position);
-      if (!best || dist < best.dist) best = { c, dist };
-    }
-    ray.set(camera.position, best.c.clone().sub(camera.position).normalize());
-    const h0 = ray.intersectObjects(pickables, false)[0];
-    if (!h0 || h0.object.userData.group !== id) return null;
-    tmpV.copy(h0.point).project(camera);
-    if (tmpV.z > 1) return null;
-    return { x: (tmpV.x + 1) / 2 * container.clientWidth, y: (1 - tmpV.y) / 2 * container.clientHeight };
-  }
-  const frameHooks = new Set();
-  const onFrame = fn => (frameHooks.add(fn), () => frameHooks.delete(fn));
 
   function pulse(ids) { const t = performance.now(); ids.forEach(id => pulseT.set(id, t)); }
 
@@ -376,7 +361,6 @@ export function createViewer(container, { onPick, onHover, onProgress, onEmptyDo
       mat.emissive.lerp(target, k);
     }
     renderer.render(scene, camera);
-    frameHooks.forEach(fn => fn(now));
     requestAnimationFrame(frame);
   }
   resize();
@@ -384,7 +368,7 @@ export function createViewer(container, { onPick, onHover, onProgress, onEmptyDo
 
   return {
     load, paint, focus, focusMany, orbit, frameBody: view => frameBody(false, view), pulse, setInsets,
-    snapshot, screenOf, onFrame,
+    snapshot,
     stopAutoRotate: () => { controls.autoRotate = false; },
     groupIds: () => [...groups.keys()],
     debug: { camera, controls, inset, groups, renderer, scene, get tween() { return tween; } },

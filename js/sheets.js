@@ -137,7 +137,7 @@ function exerciseView(v) {
   v.tab = tab;
   const roleRows = [['p', ex.p], ['s', ex.s], ['st', ex.st]].filter(([, ids]) => ids.length).map(([r, ids]) =>
     `<div class="worked-row"><span class="label" style="padding-top:4px"><span class="dot ${r}"></span> ${ROLE_NAME[r]}</span>
-      <span class="chips">${ids.map(id => `<button class="tag" data-muscle="${id}">${esc(muscleName(id))}</button>`).join('')}</span></div>`).join('');
+      <span class="chips">${ids.map(id => `<button class="tag role-${r}" data-muscle="${id}">${esc(muscleName(id))}</button>`).join('')}</span></div>`).join('');
   return `<div class="x-head">
       <h2>${esc(ex.name)}</h2>
       <div class="equip-line"><span class="tag equip">${esc(equipKind(ex))}</span> ${esc(ex.equipment)}</div>

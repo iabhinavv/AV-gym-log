@@ -120,15 +120,18 @@ then run the check.
 ## Strength reports (every 3 or 6 months)
 
 `reports/report.html` turns an export into a written training review. It covers:
-- a 3D strength map with every muscle rated and labelled
-- key lifts compared with bodyweight
-- strengths and weaknesses, each card showing its muscles on the 3D model
-- weekly sets per muscle
-- what to change, exercises to add, a weekly plan, and targets for the next report
+- **Summary:** strengths and weaknesses, with numbers from your log.
+- **Part by part:** every muscle group rated with a picture of that muscle highlighted.
+  Ratings run from red (strong) through yellow (developing) to dark grey-blue (untrained).
+- **Key lifts:** strength compared with bodyweight.
+- **Weekly sets:** hard sets per muscle per week.
+- **Your week:** your current days kept as they are, each with **one** added exercise.
+- **Habits and targets:** how to train better, and targets for the next report.
 
-It opens from the app menu (Strength Reports), and the dropdown at the top switches between
-past reports. When there is an earlier report, key lifts and weekly sets show the change
-since then.
+It is plain HTML and scripts with no ES modules or 3D rendering, so **double-clicking
+`reports/report.html` works**. It also opens from the app menu (Strength Reports). The
+dropdown at the top switches between past reports. When there is an earlier report, key
+lifts and weekly sets show the change since then.
 
 ### For the user
 
@@ -137,9 +140,8 @@ since then.
 2. Ask your AI assistant something like: *"Read Workout Log/README.md and make a strength
    report from ~/Downloads/avs-gym-log-2027-01-15.json. I'm 173 cm, 88 kg, about 22% body fat.
    I train push/pull/legs 4 days a week and do MMA. No injuries."* Include anything that has
-   changed: goals, sport, injuries, days available.
-3. Open `reports/report.html` from the app menu, or with the local server running, at
-   http://localhost:8000/reports/report.html.
+   changed: goals, sport, injuries, time available.
+3. Double-click `reports/report.html`.
 
 ### For the AI assistant
 
@@ -151,41 +153,45 @@ Do these steps in order. Don't edit app code to make a report.
    python3 tools/analyze.py <export.json> --height <cm> --weight <kg> --bodyfat <percent>
    ```
 
-   - Add `--since YYYY-MM-DD` to analyse only the period since the last report (its id is
-     the last entry in `reports/data/index.js`).
+   - Add `--since YYYY-MM-DD` to cover only the period since the last report (the last id
+     in `reports/data/index.js`).
    - This writes `reports/data/<id>.stats.js`, where `<id>` is the date of the last logged
-     set. It also adds the id to `reports/data/index.js` and prints a digest: sessions,
-     weekly sets per muscle, key lifts against bodyweight, and per-exercise progress and
-     failure rates.
-   - Never hand-edit the stats file; re-run the script instead.
+     set. It also refreshes `reports/data/library.js`, adds the id to
+     `reports/data/index.js`, and prints a digest: sessions by type (Push, Pull, Legs,
+     Arms, Core), weekly sets per muscle, key lifts against bodyweight, and per-exercise
+     progress and failure rates.
+   - Never hand-edit the stats or library files; re-run the script instead.
 
 2. **Read the digest.** If there is a previous report, also read its
-   `reports/data/<previous id>.coach.js` and compare: did the user hit the targets, and did
-   the weak muscles get more sets?
+   `reports/data/<previous id>.coach.js` and check whether the user hit the targets and
+   whether the additions were kept up.
 
-3. **Write `reports/data/<id>.coach.js`.** Copy the structure of the newest existing coach
-   file (`2026-10-15.coach.js` is the reference) and replace every value. The fields are:
+3. **Write `reports/data/<id>.coach.js`.** Copy the newest existing coach file
+   (`2026-10-15.coach.js` is the reference) and replace every value. The fields are:
    - `profile` holds height, weight, body fat, training split, sport, injuries and goal.
    - `headline` is one sentence. `summary` is one or two paragraphs, separated by a blank
      line.
-   - `muscles` needs **every** id from `js/muscles.js`, each with `{ status, note }`. Status
-     is one of `strong`, `solid`, `developing`, `weak` or `untrained`. These drive the
-     colours and labels on the 3D map. As a guide:
+   - `muscles` needs **every** id from `js/muscles.js`, each with `{ status, note }`.
+     Status is one of `strong`, `solid`, `developing`, `weak` or `untrained`. It picks the
+     muscle's colour and image. As a guide:
      - **untrained:** 0 sets a week.
      - **weak:** under about 3 sets a week, or clearly lagging strength.
      - **developing:** 3 to 6 sets a week, or machine-only work.
      - **solid:** 6 or more sets a week, progressing.
      - **strong:** good volume *and* a lift that is relatively strong or rising fast.
    - `strengths` and `weaknesses`: 4 to 6 each, as `{ title, muscles: [ids], text,
-     evidence }`. `muscles` decides what the card's 3D still shows; leave it empty for a
-     whole-body still. `evidence` must quote real numbers from the digest.
-   - `improvements` are `{ title, text }` items.
-   - `addExercises` are `{ id, day, dose, why }` items. `id` must be an exercise id in
-     `data/exercises.js`, which gives the card its photo. `reduce` items are
-     `{ title, text }`.
-   - `plan` is `{ title, note, days: [{ name, items: [strings] }] }`. It must fit the days
-     a week the user actually trains.
-   - `mma` (or any sport) is a list of `{ phase, text }`. Leave it out if not relevant.
+     evidence }`. `evidence` must quote real numbers from the digest; `muscles` become
+     links to the part-by-part cards.
+   - `improvements` are `{ title, text }` habits for the exercises the user already does,
+     such as effort, exercise order, progression and warm-ups.
+   - `additions`: **exactly one per training day type the user logs**. Each is
+     `{ day, id, position, dose, time, why }`.
+     - `day` must match a session type from the digest.
+     - `id` must be an exercise id from `data/exercises.js`.
+     - The user has limited time and wants to keep their routine. Only add **compound
+       lifts**, or **isolation work for muscles that get no work at all**.
+     - Never suggest a new split or drop their exercises.
+   - `mma` (or any sport) is a list of `{ phase, text }`; leave it out if not relevant.
      `nutrition` is a list of `{ title, text }`.
    - `keyLifts` is keyed by `bench`, `squat`, `deadlift`, `ohp`, `row`, `pulldown` and
      `pullups`, each `{ target, note }`. Add `untested: true` when the only data is a
@@ -193,17 +199,15 @@ Do these steps in order. Don't edit app code to make a report.
    - `targets` are `{ label, now, target }` items, the measurable goals for the next report.
    - `logging` lists data-quality notes; `caveats` lists the limits of the analysis.
 
-4. **Write for the user.** Keep the advice specific and grounded:
-   - Use their numbers, their split and their sport.
-   - No emoji.
-   - Use plain words, and spell out any jargon the first time it appears.
-   - Training guidance only: no medical claims. Suggest a doctor for anything
-     health-related.
+4. **Write for the user.** Use their numbers, their days and their sport. No emoji. Use
+   plain words and explain jargon the first time. Training guidance only: no medical
+   claims, and suggest a doctor for anything health-related.
 
-5. **Check it.** Serve the folder and open `reports/report.html?r=<id>`:
+5. **Check it.** Open `reports/report.html?r=<id>`, either by double-click or through a
+   local server:
    - The console must be free of errors.
-   - The 3D map should show every muscle coloured.
-   - Every strengths, weaknesses and exercise card should have an image.
+   - All 25 muscle cards should show an image.
+   - Each addition should show under its day.
    - Run `python3 tools/check_data.py` if you touched exercise data.
 
 How the numbers are counted (from `tools/analyze.py`):
@@ -216,19 +220,33 @@ How the numbers are counted (from `tools/analyze.py`):
   converted roughly where they stand in for a barbell lift; `STANDARDS` in the script lists
   the conversions and the bodyweight levels.
 
+### Muscle images
+
+`assets/muscles/<muscle>-<status>.webp` holds 125 pre-rendered pictures (25 muscles × 5
+statuses), about 2 MB. A report only references them, so there is nothing to render per
+report. Re-make them only if the model, the muscle groups or the colours in
+`reports/palette.js` change:
+
+```bash
+python3 tools/bake_muscles.py
+```
+
+Then open http://localhost:8010/tools/bake-muscles.html and wait for "Done". The page uses
+the app's viewer (`snapshot()` in `js/viewer.js`) and saves each image back into the folder.
+
 Files:
 
 | Path | What it is |
 |---|---|
 | `reports/report.html`, `report.js`, `report.css` | The report page (one template for every report). |
+| `reports/palette.js` | Status colours, shared with the image baker. |
 | `reports/data/index.js` | List of report ids, maintained by the script. |
+| `reports/data/library.js` | Muscle and exercise names for the report, generated by the script. |
 | `reports/data/<id>.stats.js` | Generated numbers. |
 | `reports/data/<id>.coach.js` | Written analysis and advice. |
 | `tools/analyze.py` | Export to stats, plus the printed digest. |
-
-The report reuses the app's viewer (`js/viewer.js`). The report page alone uses these viewer
-functions: `paint({ colors, glow })`, `snapshot(ids, spec, opts)`, `screenOf(id)` and
-`onFrame(fn)`.
+| `tools/bake_muscles.py`, `tools/bake-muscles.html` | Re-render the muscle images. |
+| `assets/muscles/` | The muscle images. |
 
 ## Releasing an update
 

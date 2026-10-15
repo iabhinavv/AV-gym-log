@@ -16,8 +16,8 @@ The weekly sets show the imbalance. Biceps, chest, triceps and lats each get rou
 lower back and abs under 1, and neck, hip flexors and rotator cuff none. Lower-body work is almost all machines, and
 there is no loaded squat yet (the one front squat was the empty bar). With roughly 69 kg of lean mass (FFMI about 23) you have more
 muscle than most people your height, so the fastest strength gains will come from heavier squats, deadlifts and presses done
-fresh with 1 to 3 reps in reserve. Losing some fat will add to that, especially for pull-ups. Fix the lower body and core now and
-you will be better prepared for takedowns, sprawls and kicks when MMA starts in December.`,
+fresh with 1 to 3 reps in reserve. Losing some fat will add to that, especially for pull-ups. You do not need a new routine: adding one well-chosen exercise to each of your
+days (below) closes most of these gaps in about 10 extra minutes a session.`,
 
   // Status for every muscle group in js/muscles.js:
   // strong | solid | developing | weak | untrained. Shown on the 3D strength map.
@@ -78,70 +78,47 @@ you will be better prepared for takedowns, sprawls and kicks when MMA starts in 
       text: 'Under one set a week for abs and obliques. For MMA, bracing, anti-rotation and rotational power matter as much as any lift.',
       evidence: 'No direct core exercise logged.' },
     { title: 'Shoulder balance', muscles: ['delts-side', 'delts-rear', 'rotator-cuff'],
-      text: 'Pressing work (chest and front delts, 16 sets a week) far outweighs rear delts, side delts and rotator cuff (6 sets combined). Striking will add more pressing-like work in December.',
+      text: 'Pressing work (chest and front delts, 16 sets a week) far outweighs rear delts, side delts and rotator cuff (6 sets combined). Not covered by this round of additions; the deadlift and rows help the upper back, and this is the next thing to add once the new lifts are settled.',
       evidence: 'Side delts 2.1, rear delts 4.0 and rotator cuff 0 sets a week.' },
     { title: 'Strength relative to bodyweight', muscles: ['lats', 'biceps'],
       text: 'You manage 3.5 pull-ups even though your pulldown is near bodyweight; the gap is the extra 23 kg of fat, not your back strength. Fat loss plus regular pull-up practice will close it.',
       evidence: 'Pull-ups 3.5, chin-ups 3.5 on 15 Oct.' },
     { title: 'Untrained areas that matter for MMA', muscles: ['neck', 'hip-flexors', 'abductors'],
-      text: 'Neck, hip flexors and hip abductors get no work. They take little time to train and pay off in the cage.',
+      text: 'Neck, hip flexors and hip abductors get no work. The hanging leg raise on arms day covers the hip flexors; neck work can start with MMA in December.',
       evidence: '0 sets logged.' },
   ],
 
   improvements: [
     { title: 'Stop going to failure on heavy compound lifts',
       text: '40% of your compound sets ended on a failed half rep (barbell row 3 of 4, shoulder press and seated row 2 of 3). On squats, deadlifts, rows and presses stop with 1 to 3 reps in reserve and keep form tight. Keep going to failure for the last set of isolation work (curls, extensions, raises), where your half-rep logging is useful.' },
-    { title: 'Do the main barbell lift first',
-      text: 'On 1 Oct the bench came after push-ups, machine press and pec deck. Start each day with its heavy lift while fresh: squat, bench, deadlift or pull-ups. Logged numbers will then also reflect your real strength.' },
-    { title: 'Swap the arm day for a second lower-body day',
-      text: 'Arms already get about 10 sets a week from push and pull days. Turn the fourth day into lower body, core and neck, which roughly doubles hamstring, glute and core work without adding time.' },
+    { title: 'Do the heaviest lift first',
+      text: 'On 1 Oct the bench came after push-ups, machine press and pec deck. Doing the main barbell lift first while fresh lets you lift more, and the log then shows your real strength.' },
     { title: 'Use double progression',
       text: 'Give each lift a rep range (for example 5 to 8 on compounds, 10 to 15 on isolation). When every set reaches the top of the range with reps in reserve, add 2.5 kg to upper-body lifts or 5 kg to lower-body lifts and start back at the bottom of the range.' },
-    { title: 'Ramp up, and mark warm-ups',
-      text: 'Do two or three lighter sets before the first heavy set, and type "Warmup" in their note so the analysis leaves them out (only one set was marked this time).' },
+    { title: 'Mark warm-ups',
+      text: 'Type "Warmup" in the note of lighter ramp-up sets so the analysis leaves them out (only one set was marked this time).' },
     { title: 'Lose some fat slowly',
-      text: 'Losing about 0.5% of bodyweight a week (roughly 0.4 to 0.5 kg) while lifting heavy raises your strength relative to bodyweight, improves pull-ups and leaves weight-class options open for December.' },
+      text: 'Losing about 0.4 to 0.5 kg a week while lifting heavy raises your strength relative to bodyweight and will improve your pull-ups.' },
   ],
 
-  // Exercises to add. ids are exercise ids from data/exercises.js (they get their photo and guide).
-  addExercises: [
-    { id: 'back-squat',            day: 'Lower A', dose: '4 x 5-6, 2 reps in reserve', why: 'The base lower-body strength lift; builds quads, glutes and adductors together.' },
-    { id: 'deadlift',              day: 'Lower B', dose: '3 x 4-5, 2 reps in reserve', why: 'Heavy hinge for the whole posterior chain and grip; directly useful for lifting and driving through opponents.' },
-    { id: 'seated-leg-curl',       day: 'Both lower days', dose: '3 x 10-12', why: 'Hamstrings are your least-trained big muscle; curls train the knee-bending role that RDLs miss.' },
-    { id: 'bulgarian-split-squat', day: 'Lower B', dose: '3 x 8 each leg', why: 'Single-leg strength and balance in a stance like fighting; evens out left and right.' },
-    { id: 'hip-thrust',            day: 'Lower A', dose: '3 x 8-10', why: 'Glute strength and hip extension power without much load on the lower back.' },
-    { id: 'overhead-press',        day: 'Push', dose: '3 x 5-8', why: 'Standing press builds the shoulders and trunk bracing together; replaces part of the machine pressing.' },
-    { id: 'cable-lateral-raise',   day: 'Push and Pull', dose: '3 x 12-15', why: 'Side delts get 2 sets a week now; cable raises are kinder to the shoulder than upright rows.' },
-    { id: 'face-pull',             day: 'Pull', dose: '3 x 12-15', why: 'Rear delts and rotator cuff, to balance the pressing before striking resumes.' },
-    { id: 'pull-up',               day: 'Pull (first)', dose: '4 sets of 2-4, stop 1 rep short', why: 'Practise the bodyweight lift you want to improve; add slow 5-second lowering reps when tired.' },
-    { id: 'pallof-press',          day: 'Lower B', dose: '3 x 10 each side', why: 'Anti-rotation core strength, the base of every punch, kick and clinch.' },
-    { id: 'cable-woodchop',        day: 'Lower A', dose: '3 x 10 each side', why: 'Rotational power from the hips through the trunk.' },
-    { id: 'hanging-leg-raise',     day: 'Pull', dose: '3 x 8-12', why: 'Abs and hip flexors together; also trains grip.' },
-    { id: 'neck-curl',             day: 'Lower B', dose: '2 x 15-20, light', why: 'Neck strength for MMA; start very light and build up over weeks. Pair with neck extension.' },
-    { id: 'neck-extension',        day: 'Lower B', dose: '2 x 15-20, light', why: 'The other half of neck training.' },
+  // Your routine stays as it is: one exercise added per training day, either a compound lift or
+  // an isolation exercise for a muscle that gets no work. ids are exercise ids from data/exercises.js.
+  // day must match a session type in the stats (Push, Pull, Legs, Arms).
+  additions: [
+    { day: 'Legs', id: 'back-squat', position: 'First, after warm-up sets', dose: '3 x 5-6, stop 2 reps short of failure', time: 'about 12 min',
+      why: 'The single biggest gap: you have no loaded squat. One lift trains quads, glutes, adductors and core bracing together. Start around 60 kg x 5 and add 2.5 to 5 kg each leg day while form stays clean.' },
+    { day: 'Pull', id: 'deadlift', position: 'First, after warm-up sets', dose: '3 x 4-5, stop 2 reps short of failure', time: 'about 12 min',
+      why: 'Hamstrings, glutes and lower back are your weakest area, and this one lift covers all three plus traps and grip. Start around 90 kg and add 5 kg a week.' },
+    { day: 'Push', id: 'cable-woodchop', position: 'Last', dose: '3 x 10 each side', time: 'about 6 min',
+      why: 'Your obliques get almost no work. Rotational strength from the hips through the trunk is what powers punches and kicks.' },
+    { day: 'Arms', id: 'hanging-leg-raise', position: 'Last', dose: '3 x 8-12', time: 'about 6 min',
+      why: 'Abs and hip flexors are barely trained or not trained at all; this trains both, and your grip as well.' },
   ],
-
-  reduce: [
-    { title: 'Dedicated arm day', text: 'Fold arms into push and pull days (2 to 3 sets each); the freed day becomes Lower B.' },
-    { title: 'Dumbbell fly at 10 kg', text: 'Swap for incline dumbbell press to train the upper chest, which gets the least chest work.' },
-    { title: 'Upright row', text: 'Replace with cable lateral raises; same muscles, less shoulder impingement risk.' },
-  ],
-
-  plan: {
-    title: 'Suggested 4-day week (Lower, Push, Pull, Lower + core)',
-    note: 'On 3-day weeks alternate: Lower A / Push / Pull, then Lower B / Push / Pull. Keep at least one rest day between the two lower days.',
-    days: [
-      { name: 'Day 1: Lower A (squat)', items: ['Back squat 4 x 5-6', 'Romanian deadlift 3 x 8', 'Hip thrust 3 x 8-10', 'Seated leg curl 3 x 10-12', 'Standing calf raise 3 x 12-15', 'Cable woodchop 3 x 10 each side'] },
-      { name: 'Day 2: Push',            items: ['Barbell bench press 4 x 5-6 (first, fresh)', 'Standing overhead press 3 x 5-8', 'Incline dumbbell press 3 x 8-10', 'Machine chest press or dips 2 x 10', 'Cable lateral raise 3 x 12-15', 'Overhead cable triceps extension 2 x 10-12'] },
-      { name: 'Day 3: Pull',            items: ['Pull-ups 4 x 2-4', 'Barbell row 3 x 6-8 (stop before failure)', 'Lat pulldown 3 x 8-10', 'Face pull 3 x 12-15', 'Incline dumbbell curl 3 x 8-12', 'Hanging leg raise 3 x 8-12', 'Farmer\'s carry 3 x 30 m'] },
-      { name: 'Day 4: Lower B + core + neck', items: ['Deadlift 3 x 4-5', 'Bulgarian split squat 3 x 8 each leg', 'Seated leg curl 3 x 10-12', 'Leg extension 2 x 12-15', 'Pallof press 3 x 10 each side', 'Neck curl and neck extension 2 x 15-20 each, light'] },
-    ],
-  },
 
   mma: [
-    { phase: 'Now to 22 Nov', text: 'Strength block on the plan above. Add 1 to 2 short conditioning sessions a week (skipping, bag rounds or bike intervals, 20 to 25 minutes) so your fitness is ready for December.' },
-    { phase: '23 to 30 Nov', text: 'Deload: same weights, about 40% fewer sets, no failure. Arrive at MMA fresh.' },
-    { phase: 'From December', text: 'Drop to 2 or 3 lifting days (full body or upper/lower), 2 to 3 hard sets per lift, no failure. Keep the heavy lower-body day at least 48 hours away from hard sparring. Keep neck, core and grip work.' },
+    { phase: 'Now to 22 Nov', text: 'Keep your routine with the four additions above and push the new lifts up steadily. If you can, add a short conditioning session (skipping or bag rounds, 20 minutes) once a week so your fitness is ready for December.' },
+    { phase: '23 to 30 Nov', text: 'One easier week: same exercises and weights, about a third fewer sets, nothing to failure. Arrive at MMA fresh.' },
+    { phase: 'From December', text: 'Keep the same days but cut each exercise to 2 or 3 hard sets and avoid failure. Keep the squat and deadlift days at least 48 hours away from hard sparring. Two light sets of neck curls at the end of any session (5 minutes) are worth adding then.' },
   ],
 
   nutrition: [
