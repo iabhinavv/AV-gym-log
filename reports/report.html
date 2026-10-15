@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Strength Report · AV's Gym Log</title>
+<meta name="description" content="Training analysis from an AV's Gym Log export: strengths, weaknesses and a plan, on a 3D muscle map.">
+<meta name="theme-color" content="#0B0D10">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="report.css">
+<script type="importmap">
+{ "imports": {
+    "three": "../vendor/three/three.module.min.js",
+    "three/addons/": "../vendor/three/addons/"
+} }
+</script>
+<!-- Report list. Each report is data/<id>.stats.js (from tools/analyze.py) + data/<id>.coach.js. -->
+<script src="data/index.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="wordmark" href="../index.html">AV's Gym Log</a>
+      <nav aria-label="Sections">
+        <a href="#map">Strength map</a><a href="#lifts">Key lifts</a><a href="#strengths">Strengths</a>
+        <a href="#weaknesses">Weaknesses</a><a href="#volume">Volume</a><a href="#improve">Improve</a>
+        <a href="#add">Add</a><a href="#plan">Plan</a><a href="#targets">Targets</a>
+      </nav>
+      <select class="select" id="report-pick" aria-label="Choose report"></select>
+    </div>
+  </header>
+  <main id="report"><div class="wrap"><p class="label" style="padding:60px 0">Loading report</p></div></main>
+  <script type="module" src="report.js"></script>
+</body>
+</html>

@@ -210,18 +210,23 @@ export function createViewer(container, { onPick, onHover, onProgress, onEmptyDo
   }
 
   // ------------------------------------------------------------ colours
-  // spec: { focus, roles: {id: 'p'|'s'|'st'}, recovery: {id: 0..1} }
+  // spec: { focus, roles: {id: 'p'|'s'|'st'}, recovery: {id: 0..1}, colors: {id: '#hex'} }
+  // `colors` (used by the strength report) paints each listed group its own colour.
   function paint(next) {
     spec = next || {};
     const tmp = new THREE.Color();
     const dimmed = !!(spec.focus || spec.roles);
+    const neutral = !!(spec.recovery || spec.colors);
     for (const m of all) {
       const u = m.material.userData, k = m.userData.kind, g = m.userData.group;
       let col, emi = EMI.none;
-      if (k === 'bone') col = dimmed ? COL.boneDim : spec.recovery ? COL.recBone : COL.bone;
-      else if (k === 'ctx|tendon') col = dimmed || spec.recovery ? COL.tendonDim : COL.tendon;
-      else if (k === 'ctx|muscle') col = dimmed ? COL.ctxDim : spec.recovery ? COL.recCtx : COL.ctx;
-      else if (spec.roles) {
+      if (k === 'bone') col = dimmed ? COL.boneDim : neutral ? COL.recBone : COL.bone;
+      else if (k === 'ctx|tendon') col = dimmed || neutral ? COL.tendonDim : COL.tendon;
+      else if (k === 'ctx|muscle') col = dimmed ? COL.ctxDim : neutral ? COL.recCtx : COL.ctx;
+      else if (spec.colors) {
+        col = spec.colors[g] ? tmp.set(spec.colors[g]).clone() : COL.recCtx;
+        if (spec.colors[g] && spec.glow?.includes(g)) emi = EMI.p;
+      } else if (spec.roles) {
         const r = spec.roles[g];
         col = r ? COL[r] : COL.dim;
         if (r === 'p') emi = EMI.p;
@@ -235,6 +240,73 @@ export function createViewer(container, { onPick, onHover, onProgress, onEmptyDo
       u.sheen = col === COL.dim || col === COL.ctxDim ? u.sheen0 * 0.2 : u.sheen0;
     }
   }
+  // Report helpers ------------------------------------------------------------
+  // Render a still of some groups (or the whole body) with the given paint spec, at w x h,
+  // and return a PNG data URL. Camera, size and colours are restored before returning.
+  function snapshot(ids, paintSpec, { view = 'front', w = 480, h = 360, margin = 1.25 } = {}) {
+    const saved = { pos: camera.position.clone(), target: controls.target.clone(), spec,
+                    size: renderer.getSize(new THREE.Vector2()), pr: renderer.getPixelRatio() };
+    const box = new THREE.Box3();
+    (ids && ids.length ? ids : [...groups.keys()]).forEach(id => (groups.get(id) || []).forEach(m => box.expandByObject(m)));
+    if (!ids || !ids.length) box.copy(bodyBox);
+    const c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
+    const dir = (VIEW[view] || VIEW.front).clone().normalize();
+    const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    const ex = Math.max(size.x, 0.3) * margin, ey = Math.max(size.y, 0.3) * margin;
+    const d = Math.max(ey / 2 / t, ex / 2 / (t * (w / h)));
+    paint(paintSpec);
+    for (const m of all) {
+      const u = m.material.userData;
+      m.material.color.copy(u.color); m.material.emissive.copy(u.emissive);
+      if (u.sheen0) m.material.sheen = u.sheen;
+    }
+    renderer.setPixelRatio(1.5);
+    renderer.setSize(w, h, false);
+    camera.clearViewOffset();
+    camera.aspect = w / h;
+    camera.position.copy(c.clone().add(dir.multiplyScalar(d)));
+    camera.lookAt(c);
+    camera.updateProjectionMatrix();
+    renderer.render(scene, camera);
+    const url = renderer.domElement.toDataURL('image/png');
+    renderer.setPixelRatio(saved.pr);
+    renderer.setSize(saved.size.x, saved.size.y, false);
+    camera.position.copy(saved.pos);
+    controls.target.copy(saved.target);
+    camera.lookAt(saved.target);
+    applyInsets();
+    paint(saved.spec);
+    for (const m of all) {
+      const u = m.material.userData;
+      m.material.color.copy(u.color); m.material.emissive.copy(u.emissive);
+      if (u.sheen0) m.material.sheen = u.sheen;
+    }
+    renderer.render(scene, camera);
+    return url;
+  }
+
+  // Where a group's visible surface sits on screen (CSS px within the container), or null when
+  // the group faces away or is hidden behind something else. Picks the side nearer the camera.
+  const tmpV = new THREE.Vector3();
+  function screenOf(id) {
+    const meshes = groups.get(id);
+    if (!meshes) return null;
+    let best = null;
+    for (const m of meshes) {
+      const c = new THREE.Box3().setFromObject(m).getCenter(new THREE.Vector3());
+      const dist = c.distanceTo(camera.position);
+      if (!best || dist < best.dist) best = { c, dist };
+    }
+    ray.set(camera.position, best.c.clone().sub(camera.position).normalize());
+    const h0 = ray.intersectObjects(pickables, false)[0];
+    if (!h0 || h0.object.userData.group !== id) return null;
+    tmpV.copy(h0.point).project(camera);
+    if (tmpV.z > 1) return null;
+    return { x: (tmpV.x + 1) / 2 * container.clientWidth, y: (1 - tmpV.y) / 2 * container.clientHeight };
+  }
+  const frameHooks = new Set();
+  const onFrame = fn => (frameHooks.add(fn), () => frameHooks.delete(fn));
+
   function pulse(ids) { const t = performance.now(); ids.forEach(id => pulseT.set(id, t)); }
 
   // ------------------------------------------------------------ picking
@@ -304,6 +376,7 @@ export function createViewer(container, { onPick, onHover, onProgress, onEmptyDo
       mat.emissive.lerp(target, k);
     }
     renderer.render(scene, camera);
+    frameHooks.forEach(fn => fn(now));
     requestAnimationFrame(frame);
   }
   resize();
@@ -311,6 +384,7 @@ export function createViewer(container, { onPick, onHover, onProgress, onEmptyDo
 
   return {
     load, paint, focus, focusMany, orbit, frameBody: view => frameBody(false, view), pulse, setInsets,
+    snapshot, screenOf, onFrame,
     stopAutoRotate: () => { controls.autoRotate = false; },
     groupIds: () => [...groups.keys()],
     debug: { camera, controls, inset, groups, renderer, scene, get tween() { return tween; } },

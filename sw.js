@@ -1,5 +1,5 @@
 // Offline cache. Bump VERSION whenever any file below changes so phones pick up the update.
-const VERSION = 'wlog-3';
+const VERSION = 'wlog-4';
 const FILES = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/main.js', 'js/viewer.js', 'js/sheets.js', 'js/store.js', 'js/lib.js', 'js/muscles.js',

@@ -1,0 +1,285 @@
+#!/usr/bin/env python3
+"""Turn an AV's Gym Log export into the numbers behind a strength report.
+
+    python3 tools/analyze.py ~/Downloads/avs-gym-log-2026-10-15.json \
+        --height 173 --weight 92 --bodyfat 25 [--id 2026-10-15] [--since 2026-07-01]
+
+Writes reports/data/<id>.stats.js (generated: never edit by hand, re-run instead), adds <id> to
+reports/data/index.js, and prints a plain-text digest to read before writing the coaching notes
+(reports/data/<id>.coach.js; see README, "Strength reports").
+
+Definitions used throughout:
+  hard set      a logged set not marked as a warm-up in its note
+  muscle sets   1 per hard set where the muscle is primary, 0.5 where it is secondary
+  e1RM          Epley: w x (1 + reps/30); reps == 1 -> w. Only for rep-counted, loaded sets
+  failure set   reps end in .5 (the app's convention: the last rep failed partway)
+  cluster set   a set whose note lists mini-sets ("7,4,6": rest-pause or drop set). It counts as one
+                hard set but is left out of e1RM and best-set figures, since summed reps overstate it
+"""
+import argparse, datetime as dt, json, math, os, re, sys
+from collections import Counter, defaultdict
+
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+read = lambda p: open(os.path.join(ROOT, p), encoding='utf-8').read()
+
+# Timed / distance exercises (mirror of MEASURE in js/lib.js).
+MEASURE = {'plank': 'sec', 'side-plank': 'sec', 'dead-hang': 'sec', 'copenhagen-plank': 'sec',
+           'farmers-carry': 'm', 'suitcase-carry': 'm', 'heel-walk': 'm'}
+
+# Weekly hard-set bands per muscle for a 3-4 day lifter who also does MMA. Below `low` the
+# muscle is under-trained; `target` is the middle of a productive range; above `high` is a lot.
+VOLUME_BAND = {'low': 6, 'target': 10, 'high': 20}
+
+# Rough strength levels as multiples of bodyweight for adult men (one-rep max). These are
+# orientation only; they are commonly quoted community standards, not a validated test.
+STANDARDS = {
+    # key lift id: (label, exercises that count, [novice, intermediate, advanced] x BW)
+    'bench':    ('Bench press', ['barbell-bench-press'], [0.75, 1.0, 1.5]),
+    'squat':    ('Squat', ['back-squat', 'front-squat:1.18', 'hack-squat:0.8'], [1.0, 1.5, 2.0]),
+    'deadlift': ('Deadlift / hinge', ['deadlift', 'sumo-deadlift', 'romanian-deadlift:1.25', 'rack-pull:0.85'], [1.25, 1.75, 2.25]),
+    'ohp':      ('Overhead press', ['overhead-press', 'seated-dumbbell-press:1.0', 'machine-shoulder-press:0.85'], [0.55, 0.75, 1.0]),
+    'row':      ('Row', ['barbell-row', 'chest-supported-t-bar-row', 'seated-cable-row'], [0.75, 1.0, 1.25]),
+    'pulldown': ('Lat pulldown', ['lat-pulldown'], [0.75, 1.0, 1.25]),
+}
+LEVELS = ['Beginner', 'Novice', 'Intermediate', 'Advanced']
+
+
+def parse_library():
+    src = read('data/exercises.js')
+    body = src.split('export const RANKINGS', 1)[0]
+    ex = {}
+    for b in re.split(r"\n  \{ id: ", body)[1:]:
+        eid = re.match(r"'([a-z0-9-]+)'", b).group(1)
+        name = re.search(r"name: (['\"])(.+?)\1,", b).group(2)
+        kind = re.search(r"type: '(\w+)'", b).group(1)
+        lists = {k: re.findall(r"'([a-z-]+)'", v) for k, v in re.findall(r"\b(p|s|st): \[([^\]]*)\]", b)}
+        ex[eid] = {'name': name, 'type': kind, **lists}
+    muscles = dict(re.findall(r"\{ id: '([a-z-]+)',\s+name: '([^']+)'", read('js/muscles.js')))
+    return ex, muscles
+
+
+CLUSTER_RE = re.compile(r'^\s*\d+(\s*[,+/]\s*\d+)+\s*$')
+is_cluster = lambda s: bool(CLUSTER_RE.match(s.get('note') or ''))
+
+
+def e1rm(w, r):
+    if w <= 0 or r <= 0:
+        return 0.0
+    return w if r == 1 else w * (1 + r / 30)
+
+
+def r1(x):
+    return round(x, 1)
+
+
+def classify_session(sets, ex):
+    hits = Counter()
+    for s in sets:
+        for m in ex.get(s['ex'], {}).get('p', []):
+            hits[m] += 1
+    groups = {
+        'Push': {'chest', 'chest-upper', 'delts-front', 'delts-side', 'triceps'},
+        'Pull': {'lats', 'upper-back', 'delts-rear', 'traps', 'biceps', 'forearms'},
+        'Legs': {'quads', 'hamstrings', 'glutes', 'calves', 'adductors', 'abductors', 'hip-flexors', 'shins', 'lower-back'},
+        'Core': {'abs', 'obliques', 'serratus'},
+    }
+    score = {g: sum(hits[m] for m in ms) for g, ms in groups.items()}
+    arms = hits['biceps'] + hits['triceps']
+    total = sum(hits.values()) or 1
+    if arms / total >= 0.6:
+        return 'Arms'
+    return max(score, key=score.get)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('export')
+    ap.add_argument('--height', type=float, required=True, help='cm')
+    ap.add_argument('--weight', type=float, required=True, help='kg')
+    ap.add_argument('--bodyfat', type=float, help='percent, optional')
+    ap.add_argument('--id', help='report id, default = date of the last logged set')
+    ap.add_argument('--since', help='YYYY-MM-DD: only analyse sets from this day on')
+    a = ap.parse_args()
+
+    ex, muscles = parse_library()
+    data = json.load(open(os.path.expanduser(a.export)))
+    sets = sorted(data['sets'], key=lambda s: s['ts'])
+    if a.since:
+        t0 = dt.datetime.fromisoformat(a.since).timestamp() * 1000
+        sets = [s for s in sets if s['ts'] >= t0]
+    unknown = sorted({s['ex'] for s in sets if s['ex'] not in ex})
+    sets = [s for s in sets if s['ex'] in ex]
+    if not sets:
+        sys.exit('No sets to analyse.')
+
+    day = lambda s: dt.datetime.fromtimestamp(s['ts'] / 1000).date()
+    first, last = day(sets[0]), day(sets[-1])
+    span_days = (last - first).days + 1
+    weeks = max(1.0, span_days / 7)
+    rid = a.id or last.isoformat()
+    is_warm = lambda s: 'warm' in (s.get('note') or '').lower()
+    hard = [s for s in sets if not is_warm(s)]
+    bw = a.weight
+
+    # ---------------- sessions
+    by_day = defaultdict(list)
+    for s in sets:
+        by_day[day(s)].append(s)
+    sessions = []
+    for d in sorted(by_day):
+        ss = by_day[d]
+        order = list(dict.fromkeys(s['ex'] for s in ss))
+        sessions.append({
+            'date': d.isoformat(), 'weekday': d.strftime('%a'), 'sets': len(ss),
+            'minutes': round((ss[-1]['ts'] - ss[0]['ts']) / 60000),
+            'volume': round(sum(s['w'] * s['r'] for s in ss if MEASURE.get(s['ex'], 'reps') == 'reps')),
+            'split': classify_session(ss, ex), 'exercises': order,
+        })
+
+    # ---------------- muscles
+    msets, mdays, mlast = Counter(), defaultdict(set), {}
+    for s in hard:
+        e = ex[s['ex']]
+        for m in e['p']:
+            msets[m] += 1; mdays[m].add(day(s)); mlast[m] = day(s)
+        for m in e['s']:
+            msets[m] += 0.5; mdays[m].add(day(s)); mlast[m] = max(mlast.get(m, day(s)), day(s))
+    muscle_rows = []
+    for mid, name in muscles.items():
+        per_week = msets[mid] / weeks
+        band = ('none' if per_week == 0 else 'low' if per_week < VOLUME_BAND['low']
+                else 'high' if per_week > VOLUME_BAND['high'] else 'ok')
+        muscle_rows.append({'id': mid, 'name': name, 'sets': r1(msets[mid]), 'setsPerWeek': r1(per_week),
+                            'daysPerWeek': r1(len(mdays[mid]) / weeks), 'band': band,
+                            'lastTrained': mlast[mid].isoformat() if mid in mlast else None})
+    muscle_rows.sort(key=lambda r: -r['setsPerWeek'])
+
+    # ---------------- exercises
+    ex_rows = []
+    by_ex = defaultdict(list)
+    for s in hard:
+        by_ex[s['ex']].append(s)
+    for eid, ss in by_ex.items():
+        m = MEASURE.get(eid, 'reps')
+        straight = [s for s in ss if not is_cluster(s)] or ss
+        days_ = defaultdict(list)
+        for s in straight:
+            days_[day(s)].append(s)
+        per_day = [{'date': d.isoformat(), 'best': r1(max(e1rm(s['w'], s['r']) for s in v)) if m == 'reps' else max(s['r'] for s in v),
+                    'sets': [[s['w'], s['r']] for s in v]} for d, v in sorted(days_.items())]
+        best = max(straight, key=lambda s: (s['w'], s['r']))
+        row = {'id': eid, 'name': ex[eid]['name'], 'type': ex[eid]['type'], 'measure': m, 'sets': len(ss),
+               'sessions': len({day(s) for s in ss}), 'bestSet': [best['w'], best['r']],
+               'bestE1rm': r1(max(e1rm(s['w'], s['r']) for s in straight)) if m == 'reps' else None,
+               'clusterSets': sum(1 for s in ss if is_cluster(s)),
+               'failureShare': r1(100 * sum(1 for s in ss if s['r'] % 1 == 0.5) / len(ss)),
+               'perSession': per_day, 'notes': sorted({s['note'] for s in ss if s.get('note')})}
+        if len(per_day) >= 2 and m == 'reps' and per_day[0]['best']:
+            row['changePct'] = r1(100 * (per_day[-1]['best'] - per_day[0]['best']) / per_day[0]['best'])
+        ex_rows.append(row)
+    ex_rows.sort(key=lambda r: -r['sets'])
+    ex_by_id = {r['id']: r for r in ex_rows}
+
+    # ---------------- key lifts vs bodyweight
+    key_lifts = []
+    for key, (label, members, cuts) in STANDARDS.items():
+        best = None
+        for mem in members:
+            eid, _, factor = mem.partition(':')
+            row = ex_by_id.get(eid)
+            if row and row['bestE1rm']:
+                est = row['bestE1rm'] * float(factor or 1)
+                if not best or est > best['estimate']:
+                    best = {'from': eid, 'fromName': row['name'], 'e1rm': row['bestE1rm'], 'estimate': r1(est),
+                            'converted': bool(factor)}
+        entry = {'key': key, 'label': label, 'standards': cuts}
+        if best:
+            ratio = best['estimate'] / bw
+            level = sum(ratio >= c for c in cuts)
+            entry.update(best, ratioBW=round(ratio, 2), level=LEVELS[level])
+        key_lifts.append(entry)
+    pull = ex_by_id.get('pull-up') or ex_by_id.get('chin-up')
+    pullups = max([s['r'] for s in hard if s['ex'] in ('pull-up', 'chin-up') and s['w'] == 0] or [0])
+    key_lifts.append({'key': 'pullups', 'label': 'Bodyweight pull-ups (best set)', 'reps': pullups,
+                      'level': 'Beginner' if pullups < 1 else 'Novice' if pullups < 5 else 'Intermediate' if pullups < 13 else 'Advanced',
+                      'standards': [1, 5, 13], 'logged': bool(pull)})
+
+    # ---------------- body composition
+    h = a.height / 100
+    body = {'heightCm': a.height, 'weightKg': bw, 'bmi': r1(bw / h / h)}
+    if a.bodyfat:
+        lean = bw * (1 - a.bodyfat / 100)
+        ffmi = lean / h / h
+        body.update(bodyfatPct=a.bodyfat, leanKg=r1(lean), fatKg=r1(bw - lean), ffmi=r1(ffmi),
+                    ffmiNormalised=r1(ffmi + 6.1 * (1.8 - h)))
+
+    # ---------------- totals
+    fail = sum(1 for s in hard if s['r'] % 1 == 0.5)
+    comp = [s for s in hard if ex[s['ex']]['type'] == 'compound']
+    iso = [s for s in hard if ex[s['ex']]['type'] == 'isolation']
+    share = lambda lst: r1(100 * sum(1 for s in lst if s['r'] % 1 == 0.5) / len(lst)) if lst else 0
+    splits = Counter(s['split'] for s in sessions)
+    totals = {
+        'from': first.isoformat(), 'to': last.isoformat(), 'days': span_days, 'weeks': r1(weeks),
+        'sessions': len(sessions), 'sessionsPerWeek': r1(len(sessions) / weeks),
+        'sets': len(sets), 'hardSets': len(hard), 'hardSetsPerWeek': r1(len(hard) / weeks),
+        'avgMinutes': round(sum(s['minutes'] for s in sessions) / len(sessions)),
+        'avgSetsPerSession': r1(len(sets) / len(sessions)),
+        'failurePct': share(hard), 'failurePctCompound': share(comp), 'failurePctIsolation': share(iso),
+        'failureSets': fail, 'exercisesUsed': len(ex_rows), 'splits': dict(splits),
+        'tonnageKg': round(sum(s['w'] * s['r'] for s in hard if MEASURE.get(s['ex'], 'reps') == 'reps')),
+    }
+
+    stats = {'id': rid, 'generated': dt.date.today().isoformat(), 'export': os.path.basename(a.export),
+             'totals': totals, 'body': body, 'sessions': sessions, 'muscles': muscle_rows,
+             'exercises': ex_rows, 'keyLifts': key_lifts, 'volumeBand': VOLUME_BAND,
+             'unknownExercises': unknown}
+
+    out_dir = os.path.join(ROOT, 'reports', 'data')
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, f'{rid}.stats.js'), 'w') as f:
+        f.write('// Generated by tools/analyze.py. Do not edit; re-run the script instead.\n'
+                'window.GYM_REPORTS = window.GYM_REPORTS || {};\n'
+                f'(window.GYM_REPORTS[{json.dumps(rid)}] = window.GYM_REPORTS[{json.dumps(rid)}] || {{}}).stats = '
+                + json.dumps(stats, indent=1) + ';\n')
+    idx_path = os.path.join(out_dir, 'index.js')
+    ids = re.findall(r'"(\d{4}-\d{2}-\d{2}[^"]*)"', open(idx_path).read()) if os.path.exists(idx_path) else []
+    ids = sorted(set(ids) | {rid})
+    with open(idx_path, 'w') as f:
+        f.write('// Report ids, oldest first. Maintained by tools/analyze.py.\nwindow.GYM_REPORT_INDEX = '
+                + json.dumps(ids) + ';\n')
+
+    # ---------------- digest for the person (or AI) writing the coaching notes
+    p = print
+    p(f'Report {rid}: {first} to {last} ({span_days} days, {totals["weeks"]} weeks)')
+    p(f'Sessions {len(sessions)} ({totals["sessionsPerWeek"]}/week), hard sets {len(hard)} ({totals["hardSetsPerWeek"]}/week), '
+      f'avg {totals["avgMinutes"]} min; failure {totals["failurePct"]}% (compound {totals["failurePctCompound"]}%, isolation {totals["failurePctIsolation"]}%)')
+    p('Splits:', dict(splits))
+    if body.get('ffmi'):
+        p(f'Body: BMI {body["bmi"]}, lean {body["leanKg"]} kg, fat {body["fatKg"]} kg, FFMI {body["ffmi"]} (normalised {body["ffmiNormalised"]})')
+    p('\nSessions:')
+    for s in sessions:
+        p(f'  {s["date"]} {s["weekday"]} {s["split"]:5s} {s["sets"]:2d} sets {s["minutes"]:3d} min  {", ".join(s["exercises"])}')
+    p('\nKey lifts (e1RM / bodyweight):')
+    for k in key_lifts:
+        if 'reps' in k:
+            p(f'  {k["label"]}: {k["reps"]} reps -> {k["level"]}')
+        elif 'ratioBW' in k:
+            p(f'  {k["label"]}: {k["estimate"]} kg ({"from " + k["fromName"] + (" converted" if k["converted"] else "")}) = {k["ratioBW"]}x BW -> {k["level"]}')
+        else:
+            p(f'  {k["label"]}: not trained')
+    p('\nMuscle hard sets per week (band low<6, high>20):')
+    for m in muscle_rows:
+        p(f'  {m["name"]:14s} {m["setsPerWeek"]:5.1f}/wk  {m["daysPerWeek"]:.1f} days/wk  {m["band"]}')
+    p('\nExercises:')
+    for r in ex_rows:
+        ch = f' change {r["changePct"]:+.1f}%' if 'changePct' in r else ''
+        e1 = f' e1RM {r["bestE1rm"]}' if r['bestE1rm'] else ''
+        p(f'  {r["name"]:30s} {r["sets"]:2d} sets/{r["sessions"]} sess best {r["bestSet"]}{e1}{ch} fail {r["failureShare"]}% {r["notes"] or ""}')
+    if unknown:
+        p('\nUnknown exercise ids skipped:', unknown)
+    p(f'\nWrote reports/data/{rid}.stats.js')
+
+
+if __name__ == '__main__':
+    main()
