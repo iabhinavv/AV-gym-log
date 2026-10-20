@@ -2,7 +2,7 @@
 window.GYM_REPORTS = window.GYM_REPORTS || {};
 (window.GYM_REPORTS["2026-10-15"] = window.GYM_REPORTS["2026-10-15"] || {}).stats = {
  "id": "2026-10-15",
- "generated": "2026-10-15",
+ "generated": "2026-10-20",
  "export": "avs-gym-log-2026-10-15.json",
  "totals": {
   "from": "2026-10-01",
@@ -388,6 +388,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 17.2,
    "clusterSets": 0,
+   "lastDate": "2026-10-13",
    "failureShare": 28.6,
    "perSession": [
     {
@@ -447,6 +448,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 42.0,
    "clusterSets": 0,
+   "lastDate": "2026-10-13",
    "failureShare": 42.9,
    "perSession": [
     {
@@ -506,6 +508,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 74.0,
    "clusterSets": 0,
+   "lastDate": "2026-10-09",
    "failureShare": 33.3,
    "perSession": [
     {
@@ -561,6 +564,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 106.2,
    "clusterSets": 0,
+   "lastDate": "2026-10-12",
    "failureShare": 16.7,
    "perSession": [
     {
@@ -616,6 +620,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 83.0,
    "clusterSets": 0,
+   "lastDate": "2026-10-12",
    "failureShare": 50.0,
    "perSession": [
     {
@@ -671,6 +676,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 83.4,
    "clusterSets": 3,
+   "lastDate": "2026-10-15",
    "failureShare": 33.3,
    "perSession": [
     {
@@ -711,6 +717,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 14.2,
    "clusterSets": 0,
+   "lastDate": "2026-10-13",
    "failureShare": 20.0,
    "perSession": [
     {
@@ -762,6 +769,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 80.0,
    "clusterSets": 0,
+   "lastDate": "2026-10-01",
    "failureShare": 0.0,
    "perSession": [
     {
@@ -802,6 +810,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 64.2,
    "clusterSets": 0,
+   "lastDate": "2026-10-08",
    "failureShare": 75.0,
    "perSession": [
     {
@@ -842,6 +851,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 26.0,
    "clusterSets": 0,
+   "lastDate": "2026-10-13",
    "failureShare": 50.0,
    "perSession": [
     {
@@ -882,6 +892,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 60.0,
    "clusterSets": 0,
+   "lastDate": "2026-10-01",
    "failureShare": 0.0,
    "perSession": [
     {
@@ -918,6 +929,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 65.8,
    "clusterSets": 0,
+   "lastDate": "2026-10-06",
    "failureShare": 66.7,
    "perSession": [
     {
@@ -954,6 +966,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 100.0,
    "clusterSets": 0,
+   "lastDate": "2026-10-06",
    "failureShare": 33.3,
    "perSession": [
     {
@@ -990,6 +1003,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 56.2,
    "clusterSets": 0,
+   "lastDate": "2026-10-08",
    "failureShare": 66.7,
    "perSession": [
     {
@@ -1026,6 +1040,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 32.1,
    "clusterSets": 0,
+   "lastDate": "2026-10-08",
    "failureShare": 66.7,
    "perSession": [
     {
@@ -1062,6 +1077,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 26.7,
    "clusterSets": 0,
+   "lastDate": "2026-10-09",
    "failureShare": 33.3,
    "perSession": [
     {
@@ -1098,6 +1114,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 12.7,
    "clusterSets": 0,
+   "lastDate": "2026-10-09",
    "failureShare": 66.7,
    "perSession": [
     {
@@ -1134,6 +1151,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 56.2,
    "clusterSets": 0,
+   "lastDate": "2026-10-09",
    "failureShare": 66.7,
    "perSession": [
     {
@@ -1170,6 +1188,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 38.5,
    "clusterSets": 0,
+   "lastDate": "2026-10-09",
    "failureShare": 66.7,
    "perSession": [
     {
@@ -1206,6 +1225,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 131.7,
    "clusterSets": 0,
+   "lastDate": "2026-10-12",
    "failureShare": 33.3,
    "perSession": [
     {
@@ -1242,6 +1262,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 53.3,
    "clusterSets": 0,
+   "lastDate": "2026-10-15",
    "failureShare": 0.0,
    "perSession": [
     {
@@ -1278,6 +1299,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": null,
    "clusterSets": 0,
+   "lastDate": "2026-10-15",
    "failureShare": 0.0,
    "perSession": [
     {
@@ -1316,6 +1338,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 26.7,
    "clusterSets": 0,
+   "lastDate": "2026-10-12",
    "failureShare": 0.0,
    "perSession": [
     {
@@ -1348,6 +1371,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 74.2,
    "clusterSets": 0,
+   "lastDate": "2026-10-15",
    "failureShare": 50.0,
    "perSession": [
     {
@@ -1382,6 +1406,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 0.0,
    "clusterSets": 0,
+   "lastDate": "2026-10-09",
    "failureShare": 0.0,
    "perSession": [
     {
@@ -1410,6 +1435,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 0.0,
    "clusterSets": 0,
+   "lastDate": "2026-10-12",
    "failureShare": 0.0,
    "perSession": [
     {
@@ -1438,6 +1464,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 0.0,
    "clusterSets": 0,
+   "lastDate": "2026-10-15",
    "failureShare": 100.0,
    "perSession": [
     {
@@ -1466,6 +1493,7 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    ],
    "bestE1rm": 0.0,
    "clusterSets": 0,
+   "lastDate": "2026-10-15",
    "failureShare": 100.0,
    "perSession": [
     {
@@ -1482,6 +1510,169 @@ window.GYM_REPORTS = window.GYM_REPORTS || {};
    "notes": []
   }
  ],
+ "topExercises": [
+  {
+   "id": "cable-pushdown",
+   "name": "Cable Triceps Pushdown",
+   "sets": 7,
+   "sessions": 2,
+   "sessionShare": 29,
+   "setShare": 7.1,
+   "bestSet": [
+    30,
+    12
+   ],
+   "bestE1rm": 42.0,
+   "measure": "reps",
+   "lastDate": "2026-10-13",
+   "fav": false
+  },
+  {
+   "id": "incline-dumbbell-curl",
+   "name": "Incline Dumbbell Curl",
+   "sets": 7,
+   "sessions": 2,
+   "sessionShare": 29,
+   "setShare": 7.1,
+   "bestSet": [
+    15,
+    4.5
+   ],
+   "bestE1rm": 17.2,
+   "measure": "reps",
+   "lastDate": "2026-10-13",
+   "fav": false
+  },
+  {
+   "id": "lat-pulldown",
+   "name": "Lat Pulldown",
+   "sets": 6,
+   "sessions": 2,
+   "sessionShare": 29,
+   "setShare": 6.1,
+   "bestSet": [
+    65,
+    8.5
+   ],
+   "bestE1rm": 83.4,
+   "measure": "reps",
+   "lastDate": "2026-10-15",
+   "fav": false
+  },
+  {
+   "id": "leg-extension",
+   "name": "Leg Extension",
+   "sets": 6,
+   "sessions": 2,
+   "sessionShare": 29,
+   "setShare": 6.1,
+   "bestSet": [
+    60,
+    11.5
+   ],
+   "bestE1rm": 83.0,
+   "measure": "reps",
+   "lastDate": "2026-10-12",
+   "fav": false
+  },
+  {
+   "id": "machine-chest-press",
+   "name": "Machine Chest Press",
+   "sets": 6,
+   "sessions": 2,
+   "sessionShare": 29,
+   "setShare": 6.1,
+   "bestSet": [
+    60,
+    7
+   ],
+   "bestE1rm": 74.0,
+   "measure": "reps",
+   "lastDate": "2026-10-09",
+   "fav": false
+  },
+  {
+   "id": "standing-calf-raise",
+   "name": "Standing Calf Raise",
+   "sets": 6,
+   "sessions": 2,
+   "sessionShare": 29,
+   "setShare": 6.1,
+   "bestSet": [
+    70,
+    15.5
+   ],
+   "bestE1rm": 106.2,
+   "measure": "reps",
+   "lastDate": "2026-10-12",
+   "fav": false
+  },
+  {
+   "id": "bayesian-cable-curl",
+   "name": "Bayesian Cable Curl",
+   "sets": 5,
+   "sessions": 2,
+   "sessionShare": 29,
+   "setShare": 5.1,
+   "bestSet": [
+    10,
+    12.5
+   ],
+   "bestE1rm": 14.2,
+   "measure": "reps",
+   "lastDate": "2026-10-13",
+   "fav": false
+  },
+  {
+   "id": "barbell-bench-press",
+   "name": "Barbell Bench Press",
+   "sets": 4,
+   "sessions": 1,
+   "sessionShare": 14,
+   "setShare": 4.0,
+   "bestSet": [
+    70,
+    3
+   ],
+   "bestE1rm": 80.0,
+   "measure": "reps",
+   "lastDate": "2026-10-01",
+   "fav": false
+  },
+  {
+   "id": "barbell-row",
+   "name": "Barbell Bent-Over Row",
+   "sets": 4,
+   "sessions": 1,
+   "sessionShare": 14,
+   "setShare": 4.0,
+   "bestSet": [
+    50,
+    8.5
+   ],
+   "bestE1rm": 64.2,
+   "measure": "reps",
+   "lastDate": "2026-10-08",
+   "fav": false
+  },
+  {
+   "id": "skull-crusher",
+   "name": "Skull Crusher",
+   "sets": 4,
+   "sessions": 1,
+   "sessionShare": 14,
+   "setShare": 4.0,
+   "bestSet": [
+    20,
+    9
+   ],
+   "bestE1rm": 26.0,
+   "measure": "reps",
+   "lastDate": "2026-10-13",
+   "fav": false
+  }
+ ],
+ "favourites": [],
  "keyLifts": [
   {
    "key": "bench",

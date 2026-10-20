@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AV's Gym Log</title>
-<meta name="description" content="A workout log book built around a 3D anatomical muscle model.">
+<meta name="description" content="A free workout log book built around a 3D anatomical muscle model. Part of the FitFounders campaign.">
 <meta name="theme-color" content="#0B0D10">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AV's Gym Log">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icon-64.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
 <link rel="stylesheet" href="css/app.css">
 <script type="importmap">
@@ -25,6 +25,7 @@
   <div id="stage-fallback" hidden></div>
 
   <div id="loader" role="status">
+    <img class="loader-logo" src="assets/icon-192.png" alt="FitFounders" width="72" height="72">
     <div class="loader-title">AV's Gym Log</div>
     <div class="loader-bar"><span></span></div>
     <div class="loader-note">Loading anatomy model</div>
@@ -66,10 +67,14 @@
     <a href="#/settings" data-nav>Settings and Backup</a>
     <a href="reports/report.html">Strength Reports</a>
     <a href="#/about" data-nav>About and Credits</a>
+    <a class="drawer-ff" href="https://www.instagram.com/fitfoundrs" target="_blank" rel="noopener">
+      <img src="assets/icon-64.png" alt="" width="34" height="34">
+      <span><b>A free FitFounders app</b><small>Follow the campaign on Instagram</small></span>
+    </a>
     <div class="drawer-keys" aria-hidden="true">
       <div class="label">Keyboard</div>
       <dl><dt>N</dt><dd>Log a set</dd><dt>/</dt><dd>Search</dd><dt>J P L</dt><dd>Journal, Progress, Library</dd>
-      <dt>B</dt><dd>Body</dd><dt>Arrows</dt><dd>Turn the body</dd><dt>R</dt><dd>Reset view</dd><dt>Esc</dt><dd>Close</dd></dl>
+      <dt>F</dt><dd>Favourite the open exercise</dd><dt>B</dt><dd>Body</dd><dt>Arrows</dt><dd>Turn the body</dd><dt>R</dt><dd>Reset view</dd><dt>Esc</dt><dd>Close</dd></dl>
     </div>
   </nav>
 

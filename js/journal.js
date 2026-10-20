@@ -1,6 +1,6 @@
 // Journal: month calendar of sessions, and a page per session day.
 import * as store from './store.js';
-import { EX, MONTHS, dayKey, keyToDate, fmtDayLong, fmtDay, fmtSpan, fmtVol, fmtSet, muscleName, esc, $ } from './lib.js';
+import { EX, MONTHS, dayKey, keyToDate, fmtDayLong, fmtDay, fmtSpan, fmtVol, fmtSet, muscleName, esc, $, star } from './lib.js';
 import { setRow, bindSetEditing } from './sheets.js';
 
 let month = null; // Date at the first of the shown month
@@ -90,7 +90,7 @@ export function sessionPage(root, k, rerender) {
     const list = s.byEx.get(id);
     const vol = list.reduce((a, x) => a + x.w * x.r, 0);
     return `<div class="session-ex">
-      <h3><a href="#/progress/${id}">${esc(ex?.name || id)}</a><span class="sub" style="font-weight:400;font-size:12px;color:var(--ink-3)">${vol ? fmtVol(vol, units) + ' ' + units : ''}</span></h3>
+      <h3><a href="#/progress/${id}">${esc(ex?.name || id)}${store.isFav(id) ? star() : ''}</a><span class="sub" style="font-weight:400;font-size:12px;color:var(--ink-3)">${vol ? fmtVol(vol, units) + ' ' + units : ''}</span></h3>
       <ul class="sets">${list.map((x, i) => setRow(x, ex, i + 1)).join('')}</ul>
     </div>`;
   }).join('');

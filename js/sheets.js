@@ -5,7 +5,7 @@ import { EXERCISES } from '../data/exercises.js';
 import * as store from './store.js';
 import {
   EX, rankedFor, roleOf, ROLE_NAME, muscleName, measure, measureLabel, measureUnit, equipKind,
-  toDisplayW, fromDisplayW, fmtSet, fmtW, trim, e1rm, dayKey, fmtDay, relDay, fmtTime, esc, $, $$, toast,
+  toDisplayW, fromDisplayW, fmtSet, fmtW, trim, e1rm, dayKey, fmtDay, relDay, fmtTime, esc, $, $$, toast, star,
 } from './lib.js';
 import { RANKINGS } from '../data/exercises.js';
 import { IMAGES } from '../data/exercise-images.js';
@@ -97,7 +97,7 @@ function muscleView(v) {
     const last = store.lastSetFor(ex.id);
     rows.push(`<li class="ex-row${rank <= 3 && ranked.has(ex.id) ? ' top' : ''}" data-ex="${ex.id}" tabindex="0">
       <span class="rank">${ranked.has(ex.id) ? rank : ''}</span>
-      <span class="name">${esc(ex.name)}</span>
+      <span class="name">${esc(ex.name)}${store.isFav(ex.id) ? star() : ''}</span>
       <span class="meta"><span class="tag equip">${esc(shortEquip(ex))}</span>
         <span class="tag role"><span class="dot ${roleOf(ex, v.id)}"></span>${ROLE_NAME[roleOf(ex, v.id)]}</span></span>
       ${others.length ? `<span class="also">Also works ${others.map(o => `<button class="tag" data-muscle="${o}">${esc(muscleName(o))}</button>`).join('')}</span>` : ''}
@@ -139,7 +139,7 @@ function exerciseView(v) {
     `<div class="worked-row"><span class="label" style="padding-top:4px"><span class="dot ${r}"></span> ${ROLE_NAME[r]}</span>
       <span class="chips">${ids.map(id => `<button class="tag role-${r}" data-muscle="${id}">${esc(muscleName(id))}</button>`).join('')}</span></div>`).join('');
   return `<div class="x-head">
-      <h2>${esc(ex.name)}</h2>
+      <div class="x-title"><h2>${esc(ex.name)}</h2>${favButton(ex.id)}</div>
       <div class="equip-line"><span class="tag equip">${esc(equipKind(ex))}</span> ${esc(ex.equipment)}</div>
     </div>
     <div class="label" style="margin-bottom:8px">Muscles worked</div>
@@ -148,6 +148,12 @@ function exerciseView(v) {
       ${['log', 'guide', 'history'].map(t => `<button role="tab" data-tab="${t}" aria-selected="${t === tab}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}
     </div>
     <div id="tab-body">${tabBody(ex, tab)}</div>`;
+}
+
+function favButton(id) {
+  const on = store.isFav(id);
+  return `<button class="fav-btn" data-fav="${id}" aria-pressed="${on}" title="${on ? 'Remove from favourites' : 'Add to favourites'} (F)">
+    ${star(on)}<span>${on ? 'Favourite' : 'Add to favourites'}</span></button>`;
 }
 
 function tabBody(ex, tab) {
@@ -339,7 +345,9 @@ function quickResults(q) {
       if (!seen.has(sets[i].ex) && EX[sets[i].ex]) { seen.add(sets[i].ex); recent.push(EX[sets[i].ex]); }
     }
     const all = [...EXERCISES].sort((a, b) => a.name.localeCompare(b.name));
-    return (recent.length ? `<div class="label" style="margin:6px 0">Recent</div>${exList(recent)}` : '')
+    const fav = store.favs().map(id => EX[id]).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name));
+    return (fav.length ? `<div class="label" style="margin:6px 0">Favourites</div>${exList(fav)}` : '')
+      + (recent.length ? `<div class="label" style="margin:${fav.length ? 18 : 6}px 0 6px">Recent</div>${exList(recent)}` : '')
       + `<div class="label" style="margin:18px 0 6px">All exercises</div>${exList(all)}`;
   }
   const hits = EXERCISES.filter(e => e.name.toLowerCase().includes(q) || e.equipment.toLowerCase().includes(q)
@@ -351,7 +359,7 @@ function exList(list) {
   const units = store.get('units');
   return `<ul class="plain-list">${list.map(e => {
     const last = store.lastSetFor(e.id);
-    return `<li data-ex="${e.id}" tabindex="0"><span>${esc(e.name)}<div class="sub">${e.p.map(muscleName).join(', ')} · ${esc(equipKind(e))}</div></span>
+    return `<li data-ex="${e.id}" tabindex="0"><span>${esc(e.name)}${store.isFav(e.id) ? star() : ''}<div class="sub">${e.p.map(muscleName).join(', ')} · ${esc(equipKind(e))}</div></span>
       ${last ? `<span class="right">${esc(fmtSet(last, e, units))}<div class="sub">${esc(relDay(dayKey(last.ts)))}</div></span>` : ''}</li>`;
   }).join('')}</ul>`;
 }
@@ -359,6 +367,8 @@ function exList(list) {
 // ------------------------------------------------------------ events
 function bind(v) {
   body.onclick = e => {
+    const fav = e.target.closest('[data-fav]');
+    if (fav) { toggleFavourite(fav.dataset.fav); return; }
     const mBtn = e.target.closest('[data-muscle]');
     if (mBtn) { e.stopPropagation(); open({ type: 'muscle', id: mBtn.dataset.muscle }); return; }
     const exEl = e.target.closest('[data-ex]');
@@ -398,6 +408,14 @@ function bind(v) {
     q.addEventListener('input', () => { v.q = q.value; $('#q-results').innerHTML = quickResults(q.value); });
     if (desktop.matches) setTimeout(() => q.focus(), 300);
   }
+}
+
+// Toggle and redraw just the button, so the open tab (and any half-typed set) is untouched.
+export function toggleFavourite(id) {
+  const on = store.toggleFav(id);
+  const b = body.querySelector(`[data-fav="${id}"]`);
+  if (b) b.outerHTML = favButton(id);
+  toast(on ? 'Added to favourites' : 'Removed from favourites');
 }
 
 function refreshLogPanelForce() {

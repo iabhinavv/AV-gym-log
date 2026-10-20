@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Strength Report · AV's Gym Log</title>
-<meta name="description" content="Training analysis from an AV's Gym Log export: every muscle rated, strengths, weaknesses and one exercise to add per training day.">
+<meta name="description" content="Training analysis from an AV's Gym Log export: a summary, a page per muscle, and one exercise to add per training day. A free FitFounders app.">
 <meta name="theme-color" content="#0B0D10">
-<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/icon-64.png" type="image/png">
 <link rel="stylesheet" href="report.css">
 <!-- Plain scripts only, so this page also works when opened straight from the folder (file://).
      Each report is data/<id>.stats.js (from tools/analyze.py) plus data/<id>.coach.js. -->
@@ -17,10 +17,10 @@
 <body>
   <header class="topbar">
     <div class="wrap">
-      <a class="wordmark" href="../index.html">AV's Gym Log</a>
+      <a class="wordmark" href="../index.html"><img src="../assets/icon-64.png" alt="" width="28" height="28">AV's Gym Log</a>
       <nav aria-label="Sections">
-        <a href="#summary">Summary</a><a href="#parts">Body parts</a><a href="#lifts">Key lifts</a>
-        <a href="#volume">Volume</a><a href="#week">Your week</a><a href="#improve">Improve</a><a href="#targets">Targets</a>
+        <a href="#top">Summary</a><a href="#frequent">Most frequent</a><a href="#volume">Muscles</a><a href="#week">Your week</a>
+        <a href="#lifts">Key lifts</a><a href="#targets">Targets</a><a href="#improve">Habits</a><a href="#strengths">Strengths</a>
       </nav>
       <select class="select" id="report-pick" aria-label="Choose report"></select>
     </div>

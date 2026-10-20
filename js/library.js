@@ -1,10 +1,11 @@
 // Exercise library: browse and filter everything.
 import { EXERCISES } from '../data/exercises.js';
 import { MUSCLES } from './muscles.js';
-import { equipKind, EQUIP_KINDS, muscleName, esc, $ } from './lib.js';
+import { equipKind, EQUIP_KINDS, muscleName, esc, $, star } from './lib.js';
+import * as store from './store.js';
 import { IMAGES } from '../data/exercise-images.js';
 
-const state = { q: '', muscle: '', equip: '' };
+const state = { q: '', muscle: '', equip: '', fav: false };
 
 export function libraryPage(root, openExercise) {
   root.innerHTML = `<div class="page-inner wide">
@@ -13,6 +14,7 @@ export function libraryPage(root, openExercise) {
     <div class="lib-layout">
       <aside class="lib-filters">
         <input class="search" id="lib-q" type="search" placeholder="Search" value="${esc(state.q)}" autocomplete="off">
+        <div class="chips-row"><button class="chip chip-fav" data-favonly aria-pressed="${state.fav}">${star(true)} Favourites only</button></div>
         <div class="label lib-flabel">Muscle</div>
         <div class="chips-row" id="lib-m">
           <button class="chip" data-m="" aria-pressed="${!state.muscle}">All muscles</button>
@@ -30,7 +32,8 @@ export function libraryPage(root, openExercise) {
   const draw = () => {
     const q = state.q.trim().toLowerCase();
     const list = EXERCISES.filter(e =>
-      (!state.muscle || e.p.includes(state.muscle) || e.s.includes(state.muscle))
+      (!state.fav || store.isFav(e.id))
+      && (!state.muscle || e.p.includes(state.muscle) || e.s.includes(state.muscle))
       && (!state.equip || equipKind(e) === state.equip)
       && (!q || e.name.toLowerCase().includes(q) || e.equipment.toLowerCase().includes(q)
           || [...e.p, ...e.s].some(m => muscleName(m).toLowerCase().includes(q))))
@@ -45,14 +48,16 @@ export function libraryPage(root, openExercise) {
       ? `<div class="lib-count label">${list.length} ${list.length === 1 ? 'exercise' : 'exercises'}</div>
         <ul class="lib-cards">${list.map(e => `<li data-ex="${e.id}" tabindex="0">
           ${IMAGES[e.id] ? `<img class="thumb" src="assets/exercises/${e.id}-0.jpg" alt="" loading="lazy" decoding="async">` : `<span class="thumb none"><span>${esc(muscleName(e.p[0]))}</span></span>`}
-          <span class="body"><span class="nm">${esc(e.name)}</span>
+          <span class="body"><span class="nm">${esc(e.name)}${store.isFav(e.id) ? star() : ''}</span>
             <span class="sub">${e.p.map(muscleName).join(', ')}${e.s.length ? ' · also ' + e.s.map(muscleName).join(', ') : ''}</span>
             <span class="meta"><span class="tag equip">${esc(equipKind(e))}</span><span class="tag">${e.type}</span></span></span></li>`).join('')}</ul>`
-      : '<p class="empty">No exercises match those filters.</p>');
+      : `<p class="empty">${state.fav && !store.favs().length ? 'No favourites yet. Open an exercise and press Add to favourites.' : 'No exercises match those filters.'}</p>`);
   };
   draw();
   $('#lib-q', root).addEventListener('input', e => { state.q = e.target.value; draw(); });
   root.addEventListener('click', e => {
+    const fo = e.target.closest('[data-favonly]');
+    if (fo) { state.fav = !state.fav; fo.setAttribute('aria-pressed', state.fav); draw(); return; }
     const m = e.target.closest('[data-m]'), q = e.target.closest('[data-e]'), ex = e.target.closest('[data-ex]');
     if (m) { state.muscle = m.dataset.m; root.querySelectorAll('[data-m]').forEach(b => b.setAttribute('aria-pressed', b === m)); draw(); }
     if (q) { state.equip = q.dataset.e; root.querySelectorAll('[data-e]').forEach(b => b.setAttribute('aria-pressed', b === q)); draw(); }

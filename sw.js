@@ -1,10 +1,10 @@
 // Offline cache. Bump VERSION whenever any file below changes so phones pick up the update.
-const VERSION = 'wlog-5';
+const VERSION = 'wlog-6';
 const FILES = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/main.js', 'js/viewer.js', 'js/sheets.js', 'js/store.js', 'js/lib.js', 'js/muscles.js',
   'js/journal.js', 'js/progress.js', 'js/library.js', 'js/settings.js', 'data/exercises.js', 'data/exercise-images.js',
-  'assets/body.glb', 'assets/icon.svg', 'assets/icon-180.png', 'assets/icon-192.png', 'assets/icon-512.png',
+  'assets/body.glb', 'assets/icon-64.png', 'assets/icon-180.png', 'assets/icon-192.png', 'assets/icon-512.png',
   'vendor/three/three.module.min.js', 'vendor/three/addons/loaders/GLTFLoader.js',
   'vendor/three/addons/controls/OrbitControls.js', 'vendor/three/addons/utils/BufferGeometryUtils.js',
 ];

@@ -7,7 +7,7 @@ const listeners = new Set();
 let db = blank();
 let persistent = true;
 
-function blank() { return { version: 1, units: 'kg', recovery: false, lastBackup: null, sets: [] }; }
+function blank() { return { version: 1, units: 'kg', recovery: false, lastBackup: null, sets: [], favs: [] }; }
 
 export function load() {
   try {
@@ -18,6 +18,7 @@ export function load() {
   } catch {
     persistent = false;
   }
+  if (!Array.isArray(db.favs)) db.favs = [];
   db.sets.sort((a, b) => a.ts - b.ts);
   return persistent;
 }
@@ -64,6 +65,15 @@ export function updateSet(id, patch) {
 export function deleteSet(id) {
   db.sets = db.sets.filter(x => x.id !== id);
   save();
+}
+
+// ------------------------------------------------------------ favourites
+export const isFav = ex => db.favs.includes(ex);
+export const favs = () => db.favs.slice();
+export function toggleFav(ex) {
+  db.favs = isFav(ex) ? db.favs.filter(x => x !== ex) : [...db.favs, ex];
+  save();
+  return isFav(ex);
 }
 
 // ------------------------------------------------------------ derived views
@@ -159,21 +169,24 @@ export function parseImport(text) {
   const sets = d.sets.filter(s => s && typeof s.id === 'string' && typeof s.ex === 'string'
     && Number.isFinite(s.ts) && Number.isFinite(s.w) && Number.isFinite(s.r));
   if (sets.length !== d.sets.length) throw new Error(`${d.sets.length - sets.length} sets in that file are malformed; nothing was imported.`);
-  return { sets, units: d.units === 'lb' ? 'lb' : 'kg' };
+  const favs = Array.isArray(d.favs) ? d.favs.filter(x => typeof x === 'string') : [];
+  return { sets, units: d.units === 'lb' ? 'lb' : 'kg', favs };
 }
 export function importData(parsed, mode) {
   if (mode === 'replace') {
     db.sets = parsed.sets.slice();
     db.units = parsed.units;
+    db.favs = parsed.favs.slice();
   } else {
     const have = new Set(db.sets.map(s => s.id));
     parsed.sets.forEach(s => { if (!have.has(s.id)) db.sets.push(s); });
+    db.favs = [...new Set([...db.favs, ...parsed.favs])];
   }
   db.sets.sort((a, b) => a.ts - b.ts);
   save();
 }
 export function clearAll() {
-  const units = db.units;
-  db = { ...blank(), units };
+  const units = db.units, keep = db.favs;
+  db = { ...blank(), units, favs: keep };   // favourites are a preference, not logged data
   save();
 }

@@ -1,6 +1,7 @@
 # AV's Gym Log
 
-A workout log book built around a 3D anatomical muscle model. Tap a muscle to see its
+A free workout log book built around a 3D anatomical muscle model, part of the
+[FitFounders](https://www.instagram.com/fitfoundrs) campaign. Tap a muscle to see its
 exercises ranked best first. Each exercise lists its equipment, a how-to guide and the
 other muscles it works. Log sets in a couple of taps.
 
@@ -39,7 +40,15 @@ on localhost, so development never serves stale files.
   editing and removing sets.
 - **Progress**: per exercise, the best set, the estimated one-rep max (Epley: w × (1 + reps/30)),
   an e1RM trend chart, volume per session and the full history.
-- **Exercise Library**: search, plus filters by muscle and equipment.
+- **Exercise Library**: search, plus filters by muscle and equipment, and a "Favourites
+  only" filter.
+- **Favourites**: the star button in an exercise's panel (or **F** on a laptop) marks it as
+  a favourite.
+  - A small star then shows beside it in muscle lists, Quick Log (where favourites come
+    first), the Library, Progress and the Journal.
+  - Favourites are stored with the log (`favs` in `wlog.v1`), included in exports and
+    merged on import.
+  - Clear all data keeps them.
 - **Recovery view** (menu switch): tints muscles by recent load.
   - Each primary set counts 1.0 and each secondary set 0.5.
   - Each set fades linearly over 72 hours, and 6 fresh sets count as full.
@@ -119,14 +128,25 @@ then run the check.
 
 ## Strength reports (every 3 or 6 months)
 
-`reports/report.html` turns an export into a written training review. It covers:
-- **Summary:** strengths and weaknesses, with numbers from your log.
-- **Part by part:** every muscle group rated with a picture of that muscle highlighted.
-  Ratings run from red (strong) through yellow (developing) to dark grey-blue (untrained).
-- **Key lifts:** strength compared with bodyweight.
-- **Weekly sets:** hard sets per muscle per week.
-- **Your week:** your current days kept as they are, each with **one** added exercise.
-- **Habits and targets:** how to train better, and targets for the next report.
+`reports/report.html` turns an export into a written training review. The main page is a
+**summary**: long passages show their first two sentences, with the rest folded behind
+"Read more" or a fold-out row. In order, it shows:
+1. **Headline and numbers:** the short verdict and the key tiles.
+2. **Most frequent:** the exercises you do most, ranked by sessions then sets, with a star
+   on favourites.
+3. **Hard sets per week:** every muscle, coloured by rating. Ratings run from red (strong)
+   through yellow (developing) to dark grey-blue (untrained). Each muscle is clickable and
+   opens **its own page** (`#muscle/<id>`), which shows:
+   - the muscle's picture and rating
+   - its weekly numbers and the note on it
+   - what trains it in your log
+   - any exercise added for it
+   - previous and next links
+4. **Your week:** your current days kept as they are, each with **one** added exercise.
+5. **Key lifts and targets:** strength against bodyweight, and goals for the next report.
+6. **Habits:** how to train better, plus sport and nutrition notes.
+7. **What you are doing well / what is holding you back:** placed at the end.
+8. **Sessions and notes.**
 
 It is plain HTML and scripts with no ES modules or 3D rendering, so **double-clicking
 `reports/report.html` works**. It also opens from the app menu (Strength Reports). The
@@ -159,7 +179,7 @@ Do these steps in order. Don't edit app code to make a report.
      set. It also refreshes `reports/data/library.js`, adds the id to
      `reports/data/index.js`, and prints a digest: sessions by type (Push, Pull, Legs,
      Arms, Core), weekly sets per muscle, key lifts against bodyweight, and per-exercise
-     progress and failure rates.
+     progress and failure rates, and the most frequent exercises and favourites.
    - Never hand-edit the stats or library files; re-run the script instead.
 
 2. **Read the digest.** If there is a previous report, also read its
@@ -181,7 +201,8 @@ Do these steps in order. Don't edit app code to make a report.
      - **strong:** good volume *and* a lift that is relatively strong or rising fast.
    - `strengths` and `weaknesses`: 4 to 6 each, as `{ title, muscles: [ids], text,
      evidence }`. `evidence` must quote real numbers from the digest; `muscles` become
-     links to the part-by-part cards.
+     links to the muscle pages. The title is what shows before the user opens one, so make
+     it say the point.
    - `improvements` are `{ title, text }` habits for the exercises the user already does,
      such as effort, exercise order, progression and warm-ups.
    - `additions`: **exactly one per training day type the user logs**. Each is
@@ -206,7 +227,7 @@ Do these steps in order. Don't edit app code to make a report.
 5. **Check it.** Open `reports/report.html?r=<id>`, either by double-click or through a
    local server:
    - The console must be free of errors.
-   - All 25 muscle cards should show an image.
+   - Open a few `#muscle/<id>` pages: each should show its image.
    - Each addition should show under its day.
    - Run `python3 tools/check_data.py` if you touched exercise data.
 
@@ -270,3 +291,12 @@ file layout changes. Run `tools/check_data.py` after touching exercises or muscl
 
 If you're asked for a strength report or training analysis, follow "Strength reports" above:
 run `tools/analyze.py`, then write the coach file. Don't change app code for a report.
+
+## Branding
+
+This free app is part of the FitFounders campaign (https://www.instagram.com/fitfoundrs).
+- **Icons:** `assets/fitfounders-logo.png` is the original logo (transparent background).
+  The app icons `assets/icon-512.png`, `icon-192.png`, `icon-180.png` and `icon-64.png`
+  are that logo on white, because the black half disappears on dark backgrounds and iOS
+  icons must be opaque.
+- **Credit links:** the menu, About page and report footer link to the campaign.

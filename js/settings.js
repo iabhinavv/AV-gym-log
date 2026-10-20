@@ -58,11 +58,16 @@ export function aboutPage(root) {
       <li>Tap a muscle to see its exercises, ranked best first. Each shows its equipment and the other muscles it works.</li>
       <li>Tap an exercise for its guide, and to log weight and reps. On the body, primary muscles glow red, secondary ones amber, stabilisers grey.</li>
       <li>The plus button logs any exercise directly. Sets from the same day form one session in the Journal.</li>
+      <li>Press the star in an exercise's panel to make it a favourite. Favourites show a small star everywhere and come first in the quick log.</li>
       <li>Reps count in halves. If the last rep fails partway, log it as .5 (for example 8.5); the set is marked Failure.</li>
       <li>Recovery view (in the menu) tints muscles by how recently and how hard you trained them: each primary set counts fully, each secondary set half, fading over 72 hours.</li>
     </ul>
     <h2>About the rankings</h2>
     <p>The ${EXERCISES.length} exercises across ${MUSCLES.length} muscle groups are ranked editorially: movements that load the target muscle hardest through a full range of motion, and that are practical in a normal gym, come first. They are a sensible starting point, not a rule; the best exercise is often the one you can do consistently without pain. This app is not medical advice.</p>
+    <h2>FitFounders</h2>
+    <p class="ff-about"><img src="assets/icon-192.png" alt="FitFounders logo" width="64" height="64">
+      <span>This app is free, and part of the <b>FitFounders</b> campaign.
+      <a href="https://www.instagram.com/fitfoundrs" target="_blank" rel="noopener">Follow FitFounders on Instagram</a>.</span></p>
     <h2>Credits</h2>
     <p>Anatomy model derived from <b>BodyParts3D</b>, &copy; The Database Center for Life Science, licensed under
       <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener">CC BY-SA 2.1 Japan</a>,

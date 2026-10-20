@@ -499,3 +499,33 @@ select.select {
 .tag.role-s { color: #EFC98E; border-color: rgba(227, 168, 87, .45); background: rgba(227, 168, 87, .07); }
 .tag.role-st { color: #AEB9CB; border-color: rgba(111, 127, 150, .55); background: rgba(111, 127, 150, .1); }
 .tag.role-p:hover, .tag.role-s:hover, .tag.role-st:hover { color: var(--ink); }
+
+/* ------------------------------------------------------------ FitFounders branding */
+.loader-logo { width: 72px; height: 72px; border-radius: 16px; margin: 0 auto 4px; display: block; background: #fff; }
+.drawer-ff {
+  display: flex !important; align-items: center; gap: 12px; justify-content: flex-start !important;
+  margin: 10px 14px 0; padding: 10px 12px !important; border: 1px solid var(--line) !important; border-radius: var(--r);
+}
+.drawer-ff img { border-radius: 8px; background: #fff; flex: none; }
+.drawer-ff span { display: grid; gap: 1px; }
+.drawer-ff b { font-size: 14px; font-weight: 600; }
+.drawer-ff small { font-size: 12px; color: var(--ink-3); }
+.ff-about { display: flex; gap: 14px; align-items: center; }
+.ff-about img { border-radius: 14px; background: #fff; flex: none; }
+
+/* ------------------------------------------------------------ favourites */
+.star { width: 13px; height: 13px; display: inline-block; vertical-align: -1px; margin-left: 6px; flex: none; }
+.star path { fill: none; stroke: var(--ink-3); stroke-width: 1.6; stroke-linejoin: round; }
+.star.on path { fill: var(--accent); stroke: var(--accent); }
+.star.big { width: 20px; height: 20px; vertical-align: 2px; margin-left: 10px; }
+.x-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.fav-btn {
+  flex: none; display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 6px 11px; border-radius: 999px;
+  border: 1px solid var(--line-2); background: none; color: var(--ink-2); font-size: 12.5px; transition: border-color .15s, color .15s, background .15s;
+}
+.fav-btn .star { margin: 0; width: 15px; height: 15px; }
+.fav-btn:hover { color: var(--ink); border-color: var(--ink-3); }
+.fav-btn[aria-pressed="true"] { color: var(--accent); border-color: rgba(227, 168, 87, .55); background: rgba(227, 168, 87, .08); }
+.chip-fav { display: inline-flex; align-items: center; gap: 6px; }
+.chip-fav .star { margin: 0; }
+.chip-fav[aria-pressed="true"] .star path { fill: var(--bg); stroke: var(--bg); }

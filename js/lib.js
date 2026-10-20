@@ -120,3 +120,8 @@ export function toast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
+
+// Small star drawn as SVG (not an emoji). `on` fills it; used beside favourite exercises.
+const STAR_PATH = 'M12 3.4l2.65 5.37 5.93.86-4.29 4.18 1.01 5.9L12 16.93l-5.3 2.78 1.01-5.9-4.29-4.18 5.93-.86z';
+export const star = (on = true, cls = '') =>
+  `<svg class="star${on ? ' on' : ''}${cls ? ' ' + cls : ''}" viewBox="0 0 24 24" aria-hidden="true"><path d="${STAR_PATH}"/></svg>`;

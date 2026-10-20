@@ -193,6 +193,7 @@ def main():
                'sessions': len({day(s) for s in ss}), 'bestSet': [best['w'], best['r']],
                'bestE1rm': r1(max(e1rm(s['w'], s['r']) for s in straight)) if m == 'reps' else None,
                'clusterSets': sum(1 for s in ss if is_cluster(s)),
+               'lastDate': day(ss[-1]).isoformat(),
                'failureShare': r1(100 * sum(1 for s in ss if s['r'] % 1 == 0.5) / len(ss)),
                'perSession': per_day, 'notes': sorted({s['note'] for s in ss if s.get('note')})}
         if len(per_day) >= 2 and m == 'reps' and per_day[0]['best']:
@@ -251,9 +252,17 @@ def main():
         'tonnageKg': round(sum(s['w'] * s['r'] for s in hard if MEASURE.get(s['ex'], 'reps') == 'reps')),
     }
 
+    # ---------------- most frequent exercises and favourites
+    favs = [f for f in data.get('favs', []) if f in ex]
+    top = sorted(ex_rows, key=lambda r: (-r['sessions'], -r['sets'], r['name']))[:10]
+    top_exercises = [{'id': r['id'], 'name': r['name'], 'sets': r['sets'], 'sessions': r['sessions'],
+                      'sessionShare': round(100 * r['sessions'] / len(sessions)),
+                      'setShare': r1(100 * r['sets'] / len(hard)), 'bestSet': r['bestSet'], 'bestE1rm': r['bestE1rm'],
+                      'measure': r['measure'], 'lastDate': r['lastDate'], 'fav': r['id'] in favs} for r in top]
+
     stats = {'id': rid, 'generated': dt.date.today().isoformat(), 'export': os.path.basename(a.export),
              'totals': totals, 'body': body, 'sessions': sessions, 'muscles': muscle_rows,
-             'exercises': ex_rows, 'keyLifts': key_lifts, 'volumeBand': VOLUME_BAND,
+             'exercises': ex_rows, 'topExercises': top_exercises, 'favourites': favs, 'keyLifts': key_lifts, 'volumeBand': VOLUME_BAND,
              'unknownExercises': unknown}
 
     out_dir = os.path.join(ROOT, 'reports', 'data')
@@ -293,6 +302,11 @@ def main():
     p('\nMuscle hard sets per week (band low<6, high>20):')
     for m in muscle_rows:
         p(f'  {m["name"]:14s} {m["setsPerWeek"]:5.1f}/wk  {m["daysPerWeek"]:.1f} days/wk  {m["band"]}')
+    p('\nMost frequent (by sessions, then sets):')
+    for t in top_exercises:
+        p(f'  {t["name"]:30s} {t["sessions"]} sessions ({t["sessionShare"]}%), {t["sets"]} sets{"  [favourite]" if t["fav"] else ""}')
+    if favs:
+        p('Favourites:', ', '.join(ex[f]['name'] for f in favs))
     p('\nExercises:')
     for r in ex_rows:
         ch = f' change {r["changePct"]:+.1f}%' if 'changePct' in r else ''

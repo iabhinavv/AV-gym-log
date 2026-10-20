@@ -190,6 +190,7 @@ addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
   const go = h => { e.preventDefault(); sheets.close(); setDrawer(false); location.hash = h; };
   if (k === 'n') { e.preventDefault(); $('#btn-add').click(); }
+  else if (k === 'f' && sheets.top()?.type === 'exercise') { e.preventDefault(); sheets.toggleFavourite(sheets.top().id); }
   else if (k === '/') {
     e.preventDefault();
     const s = $('#q') || $('#lib-q');

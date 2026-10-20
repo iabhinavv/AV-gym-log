@@ -1,6 +1,6 @@
 // Progress: list of logged exercises, and a page per exercise with a trend chart.
 import * as store from './store.js';
-import { EX, measure, measureUnit, fmtSet, fmtDay, relDay, dayKey, toDisplayW, trim, fmtVol, keyToDate, esc } from './lib.js';
+import { EX, measure, measureUnit, fmtSet, fmtDay, relDay, dayKey, toDisplayW, trim, fmtVol, keyToDate, esc, star } from './lib.js';
 
 export function progressList(root) {
   const units = store.get('units');
@@ -11,7 +11,7 @@ export function progressList(root) {
     const ex = EX[id], st = store.exerciseStats(id);
     const best = measure(ex) === 'reps' && st.bestE ? `e1RM ${trim(toDisplayW(st.bestE, units))} ${units}` : `Best ${fmtSet(st.best, ex, units)}`;
     const pts = st.series.map(d => (measure(ex) === 'reps' && d.e1rm ? d.e1rm : d.top));
-    return `<li class="prog-row" onclick="location.hash='#/progress/${id}'"><span>${esc(ex.name)}
+    return `<li class="prog-row" onclick="location.hash='#/progress/${id}'"><span>${esc(ex.name)}${store.isFav(id) ? star() : ''}
         <div class="sub">${st.series.length} ${st.series.length === 1 ? 'session' : 'sessions'} · last ${esc(relDay(dayKey(st.last.ts)).toLowerCase())}</div></span>
       ${spark(pts.slice(-12))}
       <span class="right">${esc(best)}<div class="sub">${esc(fmtSet(st.last, ex, units))}</div></span></li>`;
@@ -36,7 +36,7 @@ export function progressPage(root, id, openExercise) {
   if (!ex) { root.innerHTML = '<div class="page-inner"><p class="empty">Unknown exercise.</p></div>'; return; }
   const units = store.get('units'), st = store.exerciseStats(id), m = measure(ex);
   const head = `<a class="btn small" href="#/progress">Progress</a>
-    <h1 style="margin-top:16px">${esc(ex.name)}</h1>
+    <h1 style="margin-top:16px">${esc(ex.name)}${store.isFav(id) ? star(true, 'big') : ''}</h1>
     <p class="lede">${esc(ex.equipment)}</p>`;
   if (!st.sets.length) {
     root.innerHTML = `<div class="page-inner">${head}<p class="empty">No sets logged yet.</p>
