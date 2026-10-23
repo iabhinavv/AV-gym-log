@@ -84,7 +84,7 @@
     pick.onchange = function () { location.href = '?r=' + pick.value; };
     var prevId = ids[ids.indexOf(id) - 1];
     Promise.all([loadScript('data/' + id + '.stats.js'), loadScript('data/' + id + '.coach.js'),
-      prevId ? loadScript('data/' + prevId + '.stats.js') : null]).then(function () {
+      prevId ? loadScript('data/' + prevId + '.stats.js') : null, prevId ? loadScript('data/' + prevId + '.coach.js') : null]).then(function () {
       var rep = (window.GYM_REPORTS || {})[id] || {};
       if (!rep.stats) { $('#report').innerHTML = '<div class="wrap"><p class="banner">data/' + esc(id) + '.stats.js is missing. Run tools/analyze.py.</p></div>'; return; }
       var S = rep.stats, C = rep.coach || null;
@@ -93,6 +93,7 @@
       R = {
         S: S, C: C, mStats: mStats,
         P: prevId && window.GYM_REPORTS[prevId] ? window.GYM_REPORTS[prevId].stats : null,
+        PC: prevId && window.GYM_REPORTS[prevId] ? window.GYM_REPORTS[prevId].coach || null : null,
         status: function (mid) { return (C && C.muscles && C.muscles[mid] && C.muscles[mid].status) || autoStatus(mStats[mid]); },
       };
       document.title = 'Strength Report ' + fmtDate(S.id) + " · AV's Gym Log";
@@ -142,16 +143,17 @@
       }).join('') + '</div></div></section>');
 
     // ---------------- most frequent exercises
-    var top = S.topExercises || [];
+    var top = S.topExercises || [], span = S.topExercisesSpan;
     if (top.length) {
       var maxS = Math.max.apply(null, top.map(function (t) { return t.sets; }));
       h.push('<section class="block" id="frequent"><div class="wrap"><div class="label">Most frequent</div><h2>The exercises you do most</h2>' +
-        '<p class="lede">Ranked by how many sessions include them, then by sets. A star marks your favourites in the app.</p>' +
+        '<p class="lede">' + (span ? 'Across your whole log: ' + span.sessions + ' sessions since ' + esc(fmtDate(span.from)) + '. ' : '') +
+        'Ranked by how many sessions include them, then by sets. A star marks your favourites in the app.</p>' +
         '<ol class="freq">' + top.map(function (t, i) {
           var img = IMAGES[t.id] ? '<img src="../assets/exercises/' + t.id + '-0.jpg" alt="" loading="lazy">' : '<span class="noimg"></span>';
           return '<li><span class="fr">' + (i + 1) + '</span>' + img +
             '<span class="fb"><b>' + esc(t.name) + (t.fav ? STAR : '') + '</b>' +
-            '<span class="sub">' + t.sessions + ' of ' + T.sessions + ' sessions · ' + t.sets + ' sets · best ' + esc(fmtBest(t.bestSet, t.measure)) + '</span>' +
+            '<span class="sub">' + t.sessions + ' of ' + (span ? span.sessions : T.sessions) + ' sessions · ' + t.sets + ' sets · best ' + esc(fmtBest(t.bestSet, t.measure)) + '</span>' +
             '<span class="fbar"><span style="width:' + (t.sets / maxS * 100) + '%"></span></span></span></li>';
         }).join('') + '</ol></div></section>');
     }
@@ -203,15 +205,20 @@
     var rows = S.keyLifts.map(function (k) {
       var note = (C && C.keyLifts && C.keyLifts[k.key]) || {};
       var pv = P && P.keyLifts ? P.keyLifts.filter(function (x) { return x.key === k.key; })[0] : null;
+      // A change only means something when both reports measured the lift the same way.
+      var pvNote = R.PC && R.PC.keyLifts && R.PC.keyLifts[k.key];
+      if (pv && ((pvNote && pvNote.untested) || (pv.from && k.from && pv.from !== k.from))) pv = null;
       var best, ratio = '', level = k.level || 'Not trained', dd = '';
       if ('reps' in k) {
         best = k.logged ? k.reps + ' reps' : 'Not logged';
         if (pv && pv.reps != null && k.logged) dd = delta(k.reps - pv.reps);
       } else if (k.estimate) {
-        best = k.estimate + ' kg'; ratio = k.ratioBW.toFixed(2) + 'x';
+        best = k.estimate + ' kg' + (k.date ? '<div class="sub">' + esc((k.converted ? 'from ' + k.fromName + ', ' : '') + fmtDate(k.date)) + (k.inPeriod === false ? ', before this period' : '') + '</div>' : '');
+        ratio = k.ratioBW.toFixed(2) + 'x';
         if (pv && pv.estimate) dd = delta(Math.round((k.estimate - pv.estimate) * 10) / 10, ' kg');
       } else best = 'Not trained';
       if (note.untested) { level = 'Untested'; ratio = ''; dd = ''; best = 'Not tested'; }
+      if ('reps' in k && !k.logged) level = 'Not trained';
       if (note.note) notes.push('<li><b>' + esc(k.label) + '.</b> ' + esc(note.note) + (k.converted && !note.untested ? ' (Estimated from ' + esc(k.fromName) + '.)' : '') + '</li>');
       var lvlSt = { Advanced: 'strong', Intermediate: 'solid', Novice: 'developing', Beginner: 'weak' }[level] || 'untrained';
       return '<tr><td><b>' + esc(k.label) + '</b></td><td>' + best + dd + '</td><td>' + ratio + '</td><td><span class="lvl">' + dot(lvlSt) + esc(level) + '</span></td><td>' + esc(note.target || '') + '</td></tr>';

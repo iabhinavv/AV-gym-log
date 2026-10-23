@@ -1,0 +1,1480 @@
+{
+ "app": "avs-gym-log",
+ "version": 1,
+ "units": "kg",
+ "recovery": true,
+ "lastBackup": 1792784095939,
+ "sets": [
+  {
+   "id": "mupuxygdlq0ts0",
+   "ex": "push-up",
+   "ts": 1790878707373,
+   "w": 0,
+   "r": 10,
+   "note": "Warmup"
+  },
+  {
+   "id": "mupv5vrrkqxzc0",
+   "ex": "machine-chest-press",
+   "ts": 1790879077143,
+   "w": 55,
+   "r": 10
+  },
+  {
+   "id": "mupv62ceig2jwp",
+   "ex": "machine-chest-press",
+   "ts": 1790879085662,
+   "w": 60,
+   "r": 7
+  },
+  {
+   "id": "mupvcoi4fz1fpy",
+   "ex": "pec-deck-fly",
+   "ts": 1790879394316,
+   "w": 45,
+   "r": 10
+  },
+  {
+   "id": "mupvcs7h0n155z",
+   "ex": "pec-deck-fly",
+   "ts": 1790879399117,
+   "w": 45,
+   "r": 8
+  },
+  {
+   "id": "mupvctwoqbc9px",
+   "ex": "pec-deck-fly",
+   "ts": 1790879401320,
+   "w": 45,
+   "r": 8
+  },
+  {
+   "id": "mupvl2yc7pl3t7",
+   "ex": "barbell-bench-press",
+   "ts": 1790879786292,
+   "w": 50,
+   "r": 12
+  },
+  {
+   "id": "mupw1sbuospkp1",
+   "ex": "barbell-bench-press",
+   "ts": 1790880565674,
+   "w": 60,
+   "r": 10
+  },
+  {
+   "id": "mupw1zje72s6uu",
+   "ex": "barbell-bench-press",
+   "ts": 1790880575018,
+   "w": 70,
+   "r": 3
+  },
+  {
+   "id": "mupw26arhu4155",
+   "ex": "barbell-bench-press",
+   "ts": 1790880583779,
+   "w": 50,
+   "r": 6
+  },
+  {
+   "id": "mupwhkfj4fh4nq",
+   "ex": "machine-chest-press",
+   "ts": 1790881301935,
+   "w": 60,
+   "r": 5
+  },
+  {
+   "id": "muwzplok5cdal9",
+   "ex": "standing-calf-raise",
+   "ts": 1791309978884,
+   "w": 55,
+   "r": 15
+  },
+  {
+   "id": "mux00ih74ehbtd",
+   "ex": "standing-calf-raise",
+   "ts": 1791310487947,
+   "w": 60,
+   "r": 15
+  },
+  {
+   "id": "mux05uuuzig2ge",
+   "ex": "standing-calf-raise",
+   "ts": 1791310737270,
+   "w": 65,
+   "r": 15
+  },
+  {
+   "id": "mux0e0ly3kt38i",
+   "ex": "leg-extension",
+   "ts": 1791311117974,
+   "w": 50,
+   "r": 10
+  },
+  {
+   "id": "mux0i1gdo12rmu",
+   "ex": "leg-extension",
+   "ts": 1791311305693,
+   "w": 55,
+   "r": 8
+  },
+  {
+   "id": "mux0m1s9cdnsu3",
+   "ex": "leg-extension",
+   "ts": 1791311492745,
+   "w": 50,
+   "r": 7.5
+  },
+  {
+   "id": "mux0onqd3qnee4",
+   "ex": "hip-adduction-machine",
+   "ts": 1791311614501,
+   "w": 50,
+   "r": 9.5
+  },
+  {
+   "id": "mux0tdisrc231r",
+   "ex": "hip-adduction-machine",
+   "ts": 1791311834548,
+   "w": 45,
+   "r": 10
+  },
+  {
+   "id": "mux0wtgpt6wawx",
+   "ex": "hip-adduction-machine",
+   "ts": 1791311995177,
+   "w": 45,
+   "r": 9.5
+  },
+  {
+   "id": "mux1auka73ktc5",
+   "ex": "romanian-deadlift",
+   "ts": 1791312649786,
+   "w": 57.5,
+   "r": 10
+  },
+  {
+   "id": "mux1hh0cbp17op",
+   "ex": "romanian-deadlift",
+   "ts": 1791312958812,
+   "w": 70,
+   "r": 10
+  },
+  {
+   "id": "mux1r62ydwis1x",
+   "ex": "romanian-deadlift",
+   "ts": 1791313411210,
+   "w": 80,
+   "r": 7.5
+  },
+  {
+   "id": "muzwrzlf26cz80",
+   "ex": "lat-pulldown",
+   "ts": 1791486449907,
+   "w": 45,
+   "r": 14
+  },
+  {
+   "id": "muzwwifk7v65fg",
+   "ex": "lat-pulldown",
+   "ts": 1791486660944,
+   "w": 55,
+   "r": 12
+  },
+  {
+   "id": "muzx0576bdmyxb",
+   "ex": "lat-pulldown",
+   "ts": 1791486830418,
+   "w": 65,
+   "r": 8.5
+  },
+  {
+   "id": "muzx7axfjwh2pf",
+   "ex": "seated-cable-row",
+   "ts": 1791487164435,
+   "w": 40,
+   "r": 10
+  },
+  {
+   "id": "muzxbc84wgp9ne",
+   "ex": "seated-cable-row",
+   "ts": 1791487352740,
+   "w": 45,
+   "r": 7.5
+  },
+  {
+   "id": "muzxeoa36bgenb",
+   "ex": "seated-cable-row",
+   "ts": 1791487508331,
+   "w": 45,
+   "r": 7.5
+  },
+  {
+   "id": "muzxkmqjnimu9b",
+   "ex": "barbell-row",
+   "ts": 1791487786267,
+   "w": 40,
+   "r": 10
+  },
+  {
+   "id": "muzxpadabpgj3m",
+   "ex": "barbell-row",
+   "ts": 1791488003518,
+   "w": 50,
+   "r": 8.5
+  },
+  {
+   "id": "muzxt28tywv7xn",
+   "ex": "barbell-row",
+   "ts": 1791488179613,
+   "w": 50,
+   "r": 7.5
+  },
+  {
+   "id": "muzxvuc6i101bv",
+   "ex": "barbell-row",
+   "ts": 1791488309334,
+   "w": 50,
+   "r": 6.5
+  },
+  {
+   "id": "muzy3fvyup0eo3",
+   "ex": "single-arm-dumbbell-row",
+   "ts": 1791488663854,
+   "w": 22.5,
+   "r": 10
+  },
+  {
+   "id": "muzy9zz8fcq1ua",
+   "ex": "single-arm-dumbbell-row",
+   "ts": 1791488969828,
+   "w": 25,
+   "r": 8.5
+  },
+  {
+   "id": "muzydacpcku0k1",
+   "ex": "single-arm-dumbbell-row",
+   "ts": 1791489123241,
+   "w": 25,
+   "r": 7.5
+  },
+  {
+   "id": "muzymgg65r8kg4",
+   "ex": "bayesian-cable-curl",
+   "ts": 1791489551046,
+   "w": 10,
+   "r": 12
+  },
+  {
+   "id": "muzypsdp46irot",
+   "ex": "bayesian-cable-curl",
+   "ts": 1791489706477,
+   "w": 10,
+   "r": 10
+  },
+  {
+   "id": "muzyvoeab9c17m",
+   "ex": "incline-dumbbell-curl",
+   "ts": 1791489981250,
+   "w": 10,
+   "r": 12
+  },
+  {
+   "id": "muzyzalidpu1u9",
+   "ex": "incline-dumbbell-curl",
+   "ts": 1791490149990,
+   "w": 12.5,
+   "r": 9.5
+  },
+  {
+   "id": "muzz2bn3pqzty2",
+   "ex": "incline-dumbbell-curl",
+   "ts": 1791490291311,
+   "w": 12.5,
+   "r": 8
+  },
+  {
+   "id": "mv1ap8ozykjcoe",
+   "ex": "push-up",
+   "ts": 1791570302531,
+   "w": 0,
+   "r": 12
+  },
+  {
+   "id": "mv1b3r8q5a9ex4",
+   "ex": "dumbbell-bench-press",
+   "ts": 1791570979754,
+   "w": 17.5,
+   "r": 14
+  },
+  {
+   "id": "mv1b4mblpo3hc5",
+   "ex": "dumbbell-fly",
+   "ts": 1791571020033,
+   "w": 10,
+   "r": 8
+  },
+  {
+   "id": "mv1bak0hm1tkws",
+   "ex": "dumbbell-bench-press",
+   "ts": 1791571296977,
+   "w": 20,
+   "r": 10
+  },
+  {
+   "id": "mv1bas71klelxe",
+   "ex": "dumbbell-fly",
+   "ts": 1791571307581,
+   "w": 10,
+   "r": 7.5
+  },
+  {
+   "id": "mv1bfautmqvlhn",
+   "ex": "dumbbell-bench-press",
+   "ts": 1791571518389,
+   "w": 20,
+   "r": 8.5
+  },
+  {
+   "id": "mv1bfgz50s9qb9",
+   "ex": "dumbbell-fly",
+   "ts": 1791571526321,
+   "w": 10,
+   "r": 6.5
+  },
+  {
+   "id": "mv1bmdsmg5j0k9",
+   "ex": "machine-chest-press",
+   "ts": 1791571848790,
+   "w": 55,
+   "r": 10
+  },
+  {
+   "id": "mv1bqmdjd00iav",
+   "ex": "machine-chest-press",
+   "ts": 1791572046535,
+   "w": 55,
+   "r": 9.5
+  },
+  {
+   "id": "mv1btd64j265ig",
+   "ex": "machine-chest-press",
+   "ts": 1791572174572,
+   "w": 55,
+   "r": 6.5
+  },
+  {
+   "id": "mv1byh5pabb9sv",
+   "ex": "machine-shoulder-press",
+   "ts": 1791572413021,
+   "w": 40,
+   "r": 10
+  },
+  {
+   "id": "mv1c1x9v8g8cyx",
+   "ex": "machine-shoulder-press",
+   "ts": 1791572573875,
+   "w": 40,
+   "r": 9.5
+  },
+  {
+   "id": "mv1c5m7sf3083u",
+   "ex": "machine-shoulder-press",
+   "ts": 1791572746168,
+   "w": 45,
+   "r": 7.5
+  },
+  {
+   "id": "mv1cas1bdwns4o",
+   "ex": "upright-row",
+   "ts": 1791572986991,
+   "w": 25,
+   "r": 12
+  },
+  {
+   "id": "mv1cem6duex851",
+   "ex": "upright-row",
+   "ts": 1791573166021,
+   "w": 30,
+   "r": 8.5
+  },
+  {
+   "id": "mv1ci0l1yht3kk",
+   "ex": "upright-row",
+   "ts": 1791573324661,
+   "w": 30,
+   "r": 7.5
+  },
+  {
+   "id": "mv1cmq2esgb74y",
+   "ex": "cable-pushdown",
+   "ts": 1791573544310,
+   "w": 20,
+   "r": 14
+  },
+  {
+   "id": "mv1cp0je97udpq",
+   "ex": "cable-pushdown",
+   "ts": 1791573651194,
+   "w": 30,
+   "r": 12
+  },
+  {
+   "id": "mv1cro1nl2f2uw",
+   "ex": "cable-pushdown",
+   "ts": 1791573774971,
+   "w": 30,
+   "r": 8.5
+  },
+  {
+   "id": "mv5jzr1kjs5r3a",
+   "ex": "walking-lunge",
+   "ts": 1791827774121,
+   "w": 0,
+   "r": 10
+  },
+  {
+   "id": "mv5kcz5ks1muj9",
+   "ex": "front-squat",
+   "ts": 1791828391160,
+   "w": 20,
+   "r": 10
+  },
+  {
+   "id": "mv5kd28zmj6drr",
+   "ex": "front-squat",
+   "ts": 1791828395171,
+   "w": 20,
+   "r": 10
+  },
+  {
+   "id": "mv5kn3fuzamqws",
+   "ex": "standing-calf-raise",
+   "ts": 1791828863274,
+   "w": 60,
+   "r": 15
+  },
+  {
+   "id": "mv5kn5vi3on469",
+   "ex": "standing-calf-raise",
+   "ts": 1791828866430,
+   "w": 65,
+   "r": 15
+  },
+  {
+   "id": "mv5ko051w62dfn",
+   "ex": "standing-calf-raise",
+   "ts": 1791828905653,
+   "w": 70,
+   "r": 15.5
+  },
+  {
+   "id": "mv5lr9o3hao51k",
+   "ex": "leg-extension",
+   "ts": 1791830737588,
+   "w": 55,
+   "r": 12
+  },
+  {
+   "id": "mv5lrgzn8o86oz",
+   "ex": "leg-extension",
+   "ts": 1791830747075,
+   "w": 55,
+   "r": 10.5
+  },
+  {
+   "id": "mv5lw980cdl89g",
+   "ex": "leg-extension",
+   "ts": 1791830970288,
+   "w": 60,
+   "r": 11.5
+  },
+  {
+   "id": "mv5m211nrydur3",
+   "ex": "leg-press",
+   "ts": 1791831239627,
+   "w": 80,
+   "r": 12
+  },
+  {
+   "id": "mv5m5x7f37is07",
+   "ex": "leg-press",
+   "ts": 1791831421275,
+   "w": 90,
+   "r": 13
+  },
+  {
+   "id": "mv5m94puuudrvs",
+   "ex": "leg-press",
+   "ts": 1791831570978,
+   "w": 100,
+   "r": 9.5
+  },
+  {
+   "id": "mv6z539qfdv3w7",
+   "ex": "cable-pushdown",
+   "ts": 1791913683662,
+   "w": 25,
+   "r": 12
+  },
+  {
+   "id": "mv6z6ryj52sunk",
+   "ex": "cable-pushdown",
+   "ts": 1791913762315,
+   "w": 30,
+   "r": 10
+  },
+  {
+   "id": "mv6z980p79yucb",
+   "ex": "cable-pushdown",
+   "ts": 1791913876441,
+   "w": 30,
+   "r": 9.5
+  },
+  {
+   "id": "mv6zcuc9bh3thf",
+   "ex": "cable-pushdown",
+   "ts": 1791914045337,
+   "w": 30,
+   "r": 7.5
+  },
+  {
+   "id": "mv6zfcvw54q1ls",
+   "ex": "skull-crusher",
+   "ts": 1791914162684,
+   "w": 20,
+   "r": 8
+  },
+  {
+   "id": "mv6zjhrvw4lvy1",
+   "ex": "skull-crusher",
+   "ts": 1791914355643,
+   "w": 20,
+   "r": 9
+  },
+  {
+   "id": "mv6znf2ml5tsml",
+   "ex": "skull-crusher",
+   "ts": 1791914538766,
+   "w": 20,
+   "r": 8.5
+  },
+  {
+   "id": "mv6zqhpx6v3zbd",
+   "ex": "skull-crusher",
+   "ts": 1791914682165,
+   "w": 20,
+   "r": 7.5
+  },
+  {
+   "id": "mv6zynu1w9y1we",
+   "ex": "incline-dumbbell-curl",
+   "ts": 1791915063337,
+   "w": 10,
+   "r": 13
+  },
+  {
+   "id": "mv705xq7469k1t",
+   "ex": "incline-dumbbell-curl",
+   "ts": 1791915402751,
+   "w": 12.5,
+   "r": 11
+  },
+  {
+   "id": "mv70635ugyyqna",
+   "ex": "incline-dumbbell-curl",
+   "ts": 1791915409794,
+   "w": 12.5,
+   "r": 11
+  },
+  {
+   "id": "mv70auk2c9j9t3",
+   "ex": "incline-dumbbell-curl",
+   "ts": 1791915631922,
+   "w": 15,
+   "r": 4.5
+  },
+  {
+   "id": "mv70fnpjnkmntw",
+   "ex": "bayesian-cable-curl",
+   "ts": 1791915856327,
+   "w": 10,
+   "r": 12
+  },
+  {
+   "id": "mv70kbwed37026",
+   "ex": "bayesian-cable-curl",
+   "ts": 1791916074302,
+   "w": 10,
+   "r": 10
+  },
+  {
+   "id": "mv70pl9w15xi7z",
+   "ex": "bayesian-cable-curl",
+   "ts": 1791916319732,
+   "w": 10,
+   "r": 12.5
+  },
+  {
+   "id": "mv9vndlgklocrh",
+   "ex": "dumbbell-pullover",
+   "ts": 1792089216916,
+   "w": 40,
+   "r": 15,
+   "note": "Machine pullover"
+  },
+  {
+   "id": "mv9vrsoclahroj",
+   "ex": "dumbbell-pullover",
+   "ts": 1792089423084,
+   "w": 55,
+   "r": 10.5
+  },
+  {
+   "id": "mv9vwcm165fmsb",
+   "ex": "pull-up",
+   "ts": 1792089635545,
+   "w": 0,
+   "r": 3.5
+  },
+  {
+   "id": "mv9vxe5sy30nrw",
+   "ex": "chin-up",
+   "ts": 1792089684208,
+   "w": 0,
+   "r": 3.5
+  },
+  {
+   "id": "mv9w5biabq6izj",
+   "ex": "barbell-shrug",
+   "ts": 1792090054018,
+   "w": 40,
+   "r": 10
+  },
+  {
+   "id": "mv9w7lfjedwlq2",
+   "ex": "barbell-shrug",
+   "ts": 1792090160191,
+   "w": 40,
+   "r": 10
+  },
+  {
+   "id": "mv9wbyc7j4wkb2",
+   "ex": "barbell-shrug",
+   "ts": 1792090363543,
+   "w": 40,
+   "r": 9
+  },
+  {
+   "id": "mv9wixrcp3sdjy",
+   "ex": "lat-pulldown",
+   "ts": 1792090689384,
+   "w": 60,
+   "r": 15,
+   "note": "7,4,6"
+  },
+  {
+   "id": "mv9wr01zu0h13z",
+   "ex": "lat-pulldown",
+   "ts": 1792091065607,
+   "w": 55,
+   "r": 20,
+   "note": "7,6,7"
+  },
+  {
+   "id": "mv9wwu43fxz4ka",
+   "ex": "lat-pulldown",
+   "ts": 1792091337843,
+   "w": 55,
+   "r": 16.5,
+   "note": "6,5,6"
+  },
+  {
+   "id": "mv9wy56ccakuse",
+   "ex": "farmers-carry",
+   "ts": 1792091398836,
+   "w": 40,
+   "r": 15,
+   "note": "20 each dumbell"
+  },
+  {
+   "id": "mv9x5oyqviema0",
+   "ex": "farmers-carry",
+   "ts": 1792091751074,
+   "w": 40,
+   "r": 15
+  },
+  {
+   "id": "mv9x5u6zqqhva7",
+   "ex": "farmers-carry",
+   "ts": 1792091757851,
+   "w": 40,
+   "r": 15
+  },
+  {
+   "id": "mvb9q3n81sk579",
+   "ex": "barbell-bench-press",
+   "ts": 1792173324788,
+   "w": 50,
+   "r": 12
+  },
+  {
+   "id": "mvb9q8kezxq3uz",
+   "ex": "barbell-bench-press",
+   "ts": 1792173331166,
+   "w": 55,
+   "r": 9
+  },
+  {
+   "id": "mvb9vr4gs6dk7h",
+   "ex": "barbell-bench-press",
+   "ts": 1792173588496,
+   "w": 55,
+   "r": 8
+  },
+  {
+   "id": "mvba5li3ew5xdb",
+   "ex": "barbell-bench-press",
+   "ts": 1792174047771,
+   "w": 60,
+   "r": 8
+  },
+  {
+   "id": "mvbacsubg25772",
+   "ex": "machine-incline-press",
+   "ts": 1792174383875,
+   "w": 55,
+   "r": 11
+  },
+  {
+   "id": "mvbak2qiqavsnl",
+   "ex": "machine-incline-press",
+   "ts": 1792174723290,
+   "w": 55,
+   "r": 13.5
+  },
+  {
+   "id": "mvbaoc02r1useg",
+   "ex": "machine-incline-press",
+   "ts": 1792174921922,
+   "w": 60,
+   "r": 7.5
+  },
+  {
+   "id": "mvbat94job6qaz",
+   "ex": "machine-incline-press",
+   "ts": 1792175151475,
+   "w": 60,
+   "r": 8.5
+  },
+  {
+   "id": "mvbb029qdg8gc0",
+   "ex": "pec-deck-fly",
+   "ts": 1792175469182,
+   "w": 40,
+   "r": 11
+  },
+  {
+   "id": "mvbb44gvckdj40",
+   "ex": "pec-deck-fly",
+   "ts": 1792175658655,
+   "w": 45,
+   "r": 8
+  },
+  {
+   "id": "mvbb8xvyg78hpo",
+   "ex": "pec-deck-fly",
+   "ts": 1792175883406,
+   "w": 45,
+   "r": 8.5
+  },
+  {
+   "id": "mvbbcjonx3ml5r",
+   "ex": "pec-deck-fly",
+   "ts": 1792176051623,
+   "w": 40,
+   "r": 8.5
+  },
+  {
+   "id": "mvbbfwau90zgbn",
+   "ex": "dumbbell-pullover",
+   "ts": 1792176207942,
+   "w": 50,
+   "r": 12
+  },
+  {
+   "id": "mvbbim717g3161",
+   "ex": "dumbbell-pullover",
+   "ts": 1792176334813,
+   "w": 55,
+   "r": 10.5
+  },
+  {
+   "id": "mvbbux0jme7b07",
+   "ex": "seated-dumbbell-press",
+   "ts": 1792176908707,
+   "w": 12.5,
+   "r": 5.5,
+   "note": "Each hand"
+  },
+  {
+   "id": "mvbbzblcwpig6c",
+   "ex": "seated-dumbbell-press",
+   "ts": 1792177114224,
+   "w": 15,
+   "r": 7.5
+  },
+  {
+   "id": "mvbc4th66xq4t0",
+   "ex": "machine-lateral-raise",
+   "ts": 1792177370682,
+   "w": 40,
+   "r": 11
+  },
+  {
+   "id": "mvbc7n1bog64he",
+   "ex": "machine-lateral-raise",
+   "ts": 1792177502303,
+   "w": 35,
+   "r": 10.5
+  },
+  {
+   "id": "mvbcdo9kd3ybnm",
+   "ex": "machine-lateral-raise",
+   "ts": 1792177783832,
+   "w": 35,
+   "r": 10.5
+  },
+  {
+   "id": "mvbcfqk6mx4dnc",
+   "ex": "machine-lateral-raise",
+   "ts": 1792177880118,
+   "w": 35,
+   "r": 8.5
+  },
+  {
+   "id": "mvbcjwqgb9bcbg",
+   "ex": "cable-rear-delt-fly",
+   "ts": 1792178074744,
+   "w": 5,
+   "r": 10,
+   "note": "Each hand"
+  },
+  {
+   "id": "mvbcmy6xbtfzy8",
+   "ex": "cable-rear-delt-fly",
+   "ts": 1792178216601,
+   "w": 5,
+   "r": 10
+  },
+  {
+   "id": "mvbcr06ibixleg",
+   "ex": "cable-rear-delt-fly",
+   "ts": 1792178405802,
+   "w": 10,
+   "r": 7.5
+  },
+  {
+   "id": "mvfkvpdcbkvppc",
+   "ex": "back-squat",
+   "ts": 1792433926704,
+   "w": 0,
+   "r": 10,
+   "note": "Warmup"
+  },
+  {
+   "id": "mvfl1ig5dc2hs2",
+   "ex": "back-squat",
+   "ts": 1792434197669,
+   "w": 0,
+   "r": 10,
+   "note": "Warmup jump squats"
+  },
+  {
+   "id": "mvfl1ued40eu8m",
+   "ex": "back-squat",
+   "ts": 1792434213157,
+   "w": 15,
+   "r": 10,
+   "note": "Weighted jump squats"
+  },
+  {
+   "id": "mvfl42ajzr2u47",
+   "ex": "standing-calf-raise",
+   "ts": 1792434316699,
+   "w": 60,
+   "r": 15
+  },
+  {
+   "id": "mvfl85e25mahxq",
+   "ex": "standing-calf-raise",
+   "ts": 1792434507338,
+   "w": 65,
+   "r": 15
+  },
+  {
+   "id": "mvflb6nmbampqa",
+   "ex": "standing-calf-raise",
+   "ts": 1792434648946,
+   "w": 70,
+   "r": 15
+  },
+  {
+   "id": "mvfleon4g193m9",
+   "ex": "standing-calf-raise",
+   "ts": 1792434812224,
+   "w": 70,
+   "r": 14
+  },
+  {
+   "id": "mvflj7zfd4wk8m",
+   "ex": "leg-extension",
+   "ts": 1792435023915,
+   "w": 55,
+   "r": 12
+  },
+  {
+   "id": "mvfllskx0iq2ht",
+   "ex": "leg-extension",
+   "ts": 1792435143921,
+   "w": 55,
+   "r": 12
+  },
+  {
+   "id": "mvflpghxt0h5yk",
+   "ex": "leg-extension",
+   "ts": 1792435314885,
+   "w": 60,
+   "r": 10.5
+  },
+  {
+   "id": "mvflw7t65z7t2y",
+   "ex": "hip-abduction-machine",
+   "ts": 1792435630218,
+   "w": 50,
+   "r": 12
+  },
+  {
+   "id": "mvfm5fnegehv7q",
+   "ex": "hip-abduction-machine",
+   "ts": 1792436060282,
+   "w": 50,
+   "r": 10
+  },
+  {
+   "id": "mvfm5hqgtiqmlh",
+   "ex": "hip-abduction-machine",
+   "ts": 1792436062984,
+   "w": 50,
+   "r": 12
+  },
+  {
+   "id": "mvfm7uzss3nzqd",
+   "ex": "hip-adduction-machine",
+   "ts": 1792436173480,
+   "w": 40,
+   "r": 12
+  },
+  {
+   "id": "mvfma1tqnrib7b",
+   "ex": "hip-adduction-machine",
+   "ts": 1792436275646,
+   "w": 45,
+   "r": 11.5
+  },
+  {
+   "id": "mvfmd0rem6oq10",
+   "ex": "hip-adduction-machine",
+   "ts": 1792436414234,
+   "w": 45,
+   "r": 10.5
+  },
+  {
+   "id": "mvfmr0syk8e7yl",
+   "ex": "lying-leg-curl",
+   "ts": 1792437067474,
+   "w": 30,
+   "r": 12
+  },
+  {
+   "id": "mvfmyebe4apbn9",
+   "ex": "lying-leg-curl",
+   "ts": 1792437411578,
+   "w": 40,
+   "r": 12
+  },
+  {
+   "id": "mvfnof9ha7li7p",
+   "ex": "lying-leg-curl",
+   "ts": 1792438625861,
+   "w": 40,
+   "r": 12
+  },
+  {
+   "id": "mvfnounh3ko6d9",
+   "ex": "back-squat",
+   "ts": 1792438645805,
+   "w": 80,
+   "r": 10
+  },
+  {
+   "id": "mvfnoy2rdjrnk8",
+   "ex": "back-squat",
+   "ts": 1792438650243,
+   "w": 80,
+   "r": 10
+  },
+  {
+   "id": "mvgz7q64z517rj",
+   "ex": "dumbbell-overhead-extension",
+   "ts": 1792518468412,
+   "w": 17.5,
+   "r": 12
+  },
+  {
+   "id": "mvgzah9lor3257",
+   "ex": "dumbbell-overhead-extension",
+   "ts": 1792518596841,
+   "w": 17.5,
+   "r": 12
+  },
+  {
+   "id": "mvgzf1oqka7c02",
+   "ex": "dumbbell-overhead-extension",
+   "ts": 1792518809930,
+   "w": 20,
+   "r": 11.5
+  },
+  {
+   "id": "mvgzhleswd8ooj",
+   "ex": "dumbbell-overhead-extension",
+   "ts": 1792518928804,
+   "w": 20,
+   "r": 10.5
+  },
+  {
+   "id": "mvgzm05326z1r9",
+   "ex": "cable-pushdown",
+   "ts": 1792519134519,
+   "w": 25,
+   "r": 12
+  },
+  {
+   "id": "mvgzp14ppgcoyo",
+   "ex": "cable-pushdown",
+   "ts": 1792519275769,
+   "w": 30,
+   "r": 12
+  },
+  {
+   "id": "mvgzs7yohtzvy1",
+   "ex": "cable-pushdown",
+   "ts": 1792519424592,
+   "w": 30,
+   "r": 11.5
+  },
+  {
+   "id": "mvgzw5mi8ymxsd",
+   "ex": "cable-pushdown",
+   "ts": 1792519608186,
+   "w": 30,
+   "r": 10.5
+  },
+  {
+   "id": "mvh00rq35df6vl",
+   "ex": "bayesian-cable-curl",
+   "ts": 1792519823451,
+   "w": 10,
+   "r": 12
+  },
+  {
+   "id": "mvh06ofdxtz4q5",
+   "ex": "bayesian-cable-curl",
+   "ts": 1792520099113,
+   "w": 10,
+   "r": 15
+  },
+  {
+   "id": "mvh0cs8w10upv6",
+   "ex": "bayesian-cable-curl",
+   "ts": 1792520384000,
+   "w": 15,
+   "r": 11.5
+  },
+  {
+   "id": "mvh0hegt7bckgr",
+   "ex": "bayesian-cable-curl",
+   "ts": 1792520599421,
+   "w": 15,
+   "r": 10.5
+  },
+  {
+   "id": "mvh0jz7e5qyb4u",
+   "ex": "ez-bar-curl",
+   "ts": 1792520719610,
+   "w": 20,
+   "r": 12
+  },
+  {
+   "id": "mvh0qa4ws6x7ea",
+   "ex": "ez-bar-curl",
+   "ts": 1792521013712,
+   "w": 25,
+   "r": 12
+  },
+  {
+   "id": "mvh0txcrqu5m1a",
+   "ex": "ez-bar-curl",
+   "ts": 1792521183771,
+   "w": 30,
+   "r": 8.5
+  },
+  {
+   "id": "mvjuaqg6wsnp2o",
+   "ex": "farmers-carry",
+   "ts": 1792691609190,
+   "w": 40,
+   "r": 15
+  },
+  {
+   "id": "mvjudavi8slx4s",
+   "ex": "farmers-carry",
+   "ts": 1792691728974,
+   "w": 45,
+   "r": 15
+  },
+  {
+   "id": "mvjug2wnh6s6of",
+   "ex": "farmers-carry",
+   "ts": 1792691858615,
+   "w": 45,
+   "r": 15
+  },
+  {
+   "id": "mvjuga8go16mvo",
+   "ex": "farmers-carry",
+   "ts": 1792691868112,
+   "w": 45,
+   "r": 15
+  },
+  {
+   "id": "mvjukadwzt24pw",
+   "ex": "dumbbell-shrug",
+   "ts": 1792692054932,
+   "w": 20,
+   "r": 14
+  },
+  {
+   "id": "mvjukdfj8vwo3i",
+   "ex": "dumbbell-shrug",
+   "ts": 1792692058879,
+   "w": 22.5,
+   "r": 16
+  },
+  {
+   "id": "mvjuke8ffnxf9t",
+   "ex": "dumbbell-shrug",
+   "ts": 1792692059919,
+   "w": 22.5,
+   "r": 16
+  },
+  {
+   "id": "mvjukvrm1fk2pa",
+   "ex": "dumbbell-shrug",
+   "ts": 1792692082642,
+   "w": 22.5,
+   "r": 16
+  },
+  {
+   "id": "mvjutav0wyv70u",
+   "ex": "deadlift",
+   "ts": 1792692475452,
+   "w": 60,
+   "r": 12
+  },
+  {
+   "id": "mvjuypgeib6mre",
+   "ex": "deadlift",
+   "ts": 1792692727646,
+   "w": 70,
+   "r": 10
+  },
+  {
+   "id": "mvjv7hhntrylpz",
+   "ex": "deadlift",
+   "ts": 1792693137227,
+   "w": 80,
+   "r": 10
+  },
+  {
+   "id": "mvjvenibi9wfz3",
+   "ex": "deadlift",
+   "ts": 1792693471619,
+   "w": 90,
+   "r": 7.5
+  },
+  {
+   "id": "mvjvpendneqss6",
+   "ex": "lat-pulldown",
+   "ts": 1792693973353,
+   "w": 55,
+   "r": 12
+  },
+  {
+   "id": "mvjvtb67la9ucb",
+   "ex": "lat-pulldown",
+   "ts": 1792694155471,
+   "w": 55,
+   "r": 10.5
+  },
+  {
+   "id": "mvjvxporl9oqyh",
+   "ex": "lat-pulldown",
+   "ts": 1792694360907,
+   "w": 60,
+   "r": 8.5
+  },
+  {
+   "id": "mvjw26g2pd2ivj",
+   "ex": "lat-pulldown",
+   "ts": 1792694569250,
+   "w": 55,
+   "r": 8.5
+  },
+  {
+   "id": "mvjw7z3ryeopdz",
+   "ex": "machine-row",
+   "ts": 1792694839671,
+   "w": 40,
+   "r": 9.5
+  },
+  {
+   "id": "mvjwbtpp2t8zmp",
+   "ex": "machine-row",
+   "ts": 1792695019309,
+   "w": 35,
+   "r": 11
+  },
+  {
+   "id": "mvjwgzy4y6plao",
+   "ex": "machine-row",
+   "ts": 1792695260668,
+   "w": 35,
+   "r": 9.5
+  },
+  {
+   "id": "mvjwk7rbpy4lsn",
+   "ex": "machine-row",
+   "ts": 1792695410759,
+   "w": 40,
+   "r": 7.5
+  },
+  {
+   "id": "mvlajwslg117yn",
+   "ex": "push-up",
+   "ts": 1792779377349,
+   "w": 0,
+   "r": 10,
+   "note": "Warmup"
+  },
+  {
+   "id": "mvlajxq7aix4bv",
+   "ex": "push-up",
+   "ts": 1792779378559,
+   "w": 0,
+   "r": 10
+  },
+  {
+   "id": "mvlajz4tbnnjly",
+   "ex": "push-up",
+   "ts": 1792779380381,
+   "w": 0,
+   "r": 10
+  },
+  {
+   "id": "mvlapijtacmvho",
+   "ex": "machine-chest-press",
+   "ts": 1792779638825,
+   "w": 40,
+   "r": 10
+  },
+  {
+   "id": "mvlauxz10jxqh3",
+   "ex": "machine-chest-press",
+   "ts": 1792779892093,
+   "w": 40,
+   "r": 10
+  },
+  {
+   "id": "mvlayqghqbasda",
+   "ex": "machine-chest-press",
+   "ts": 1792780068977,
+   "w": 45,
+   "r": 7.5
+  },
+  {
+   "id": "mvlb34jak7avo7",
+   "ex": "machine-chest-press",
+   "ts": 1792780273847,
+   "w": 45,
+   "r": 7.5
+  },
+  {
+   "id": "mvlb9chxglbvsh",
+   "ex": "decline-bench-press",
+   "ts": 1792780564101,
+   "w": 50,
+   "r": 10
+  },
+  {
+   "id": "mvlbd2qmm3apoa",
+   "ex": "decline-bench-press",
+   "ts": 1792780738078,
+   "w": 50,
+   "r": 10
+  },
+  {
+   "id": "mvlbhyjry9inc6",
+   "ex": "decline-bench-press",
+   "ts": 1792780965927,
+   "w": 55,
+   "r": 7.5
+  },
+  {
+   "id": "mvlblv9xmrz5al",
+   "ex": "decline-bench-press",
+   "ts": 1792781148309,
+   "w": 50,
+   "r": 8.5
+  },
+  {
+   "id": "mvlboq4c2dji9i",
+   "ex": "machine-crunch",
+   "ts": 1792781281596,
+   "w": 0,
+   "r": 15,
+   "note": "Normal body crunches"
+  },
+  {
+   "id": "mvlbrh4or0xjwk",
+   "ex": "cable-woodchop",
+   "ts": 1792781409912,
+   "w": 15,
+   "r": 15
+  },
+  {
+   "id": "mvlbuj8ik4un0h",
+   "ex": "cable-woodchop",
+   "ts": 1792781552610,
+   "w": 15,
+   "r": 15
+  },
+  {
+   "id": "mvlbuterlhjulv",
+   "ex": "machine-crunch",
+   "ts": 1792781565795,
+   "w": 0,
+   "r": 14
+  },
+  {
+   "id": "mvlbwv6of7ghqx",
+   "ex": "machine-crunch",
+   "ts": 1792781661408,
+   "w": 0,
+   "r": 11.5
+  },
+  {
+   "id": "mvlby48z8kjbff",
+   "ex": "cable-woodchop",
+   "ts": 1792781719811,
+   "w": 15,
+   "r": 15
+  },
+  {
+   "id": "mvlc72xvd9j7qf",
+   "ex": "cable-lateral-raise",
+   "ts": 1792782138019,
+   "w": 7.5,
+   "r": 12
+  },
+  {
+   "id": "mvlcaeekz3kdq3",
+   "ex": "cable-lateral-raise",
+   "ts": 1792782292844,
+   "w": 7.5,
+   "r": 12,
+   "note": "Each arm"
+  },
+  {
+   "id": "mvlcdsel368sxu",
+   "ex": "cable-lateral-raise",
+   "ts": 1792782450957,
+   "w": 10,
+   "r": 8.5
+  },
+  {
+   "id": "mvlcinwg8rhex0",
+   "ex": "cable-lateral-raise",
+   "ts": 1792782678400,
+   "w": 10,
+   "r": 9.5
+  },
+  {
+   "id": "mvlck4cewvergm",
+   "ex": "face-pull",
+   "ts": 1792782746366,
+   "w": 15,
+   "r": 12
+  },
+  {
+   "id": "mvlclplyzw7y03",
+   "ex": "face-pull",
+   "ts": 1792782820582,
+   "w": 25,
+   "r": 10
+  },
+  {
+   "id": "mvlcoz5ew8dtbn",
+   "ex": "face-pull",
+   "ts": 1792782972914,
+   "w": 25,
+   "r": 10.5
+  },
+  {
+   "id": "mvlcyaxdh6vhwn",
+   "ex": "face-pull",
+   "ts": 1792783408081,
+   "w": 30,
+   "r": 10.5
+  },
+  {
+   "id": "mvlcz46avaeneg",
+   "ex": "incline-dumbbell-press",
+   "ts": 1792783445986,
+   "w": 15,
+   "r": 12
+  },
+  {
+   "id": "mvld39ncaga6cq",
+   "ex": "incline-dumbbell-press",
+   "ts": 1792783639704,
+   "w": 17.5,
+   "r": 7.5
+  },
+  {
+   "id": "mvld779uxjr8om",
+   "ex": "seated-dumbbell-press",
+   "ts": 1792783823250,
+   "w": 12.5,
+   "r": 11.5
+  },
+  {
+   "id": "mvldb6fzamx5by",
+   "ex": "seated-dumbbell-press",
+   "ts": 1792784008799,
+   "w": 15,
+   "r": 8.5
+  }
+ ],
+ "favs": []
+}

@@ -37,8 +37,9 @@ STANDARDS = {
     'bench':    ('Bench press', ['barbell-bench-press'], [0.75, 1.0, 1.5]),
     'squat':    ('Squat', ['back-squat', 'front-squat:1.18', 'hack-squat:0.8'], [1.0, 1.5, 2.0]),
     'deadlift': ('Deadlift / hinge', ['deadlift', 'sumo-deadlift', 'romanian-deadlift:1.25', 'rack-pull:0.85'], [1.25, 1.75, 2.25]),
-    'ohp':      ('Overhead press', ['overhead-press', 'seated-dumbbell-press:1.0', 'machine-shoulder-press:0.85'], [0.55, 0.75, 1.0]),
-    'row':      ('Row', ['barbell-row', 'chest-supported-t-bar-row', 'seated-cable-row'], [0.75, 1.0, 1.25]),
+    # Dumbbell presses are logged per hand: two dumbbells press roughly 1.7x one dumbbell as a barbell.
+    'ohp':      ('Overhead press', ['overhead-press', 'seated-dumbbell-press:1.7', 'machine-shoulder-press:0.85'], [0.55, 0.75, 1.0]),
+    'row':      ('Row', ['barbell-row', 'chest-supported-t-bar-row', 'seated-cable-row', 'machine-row:0.9'], [0.75, 1.0, 1.25]),
     'pulldown': ('Lat pulldown', ['lat-pulldown'], [0.75, 1.0, 1.25]),
 }
 LEVELS = ['Beginner', 'Novice', 'Intermediate', 'Advanced']
@@ -119,12 +120,13 @@ def main():
     ap.add_argument('--weight', type=float, required=True, help='kg')
     ap.add_argument('--bodyfat', type=float, help='percent, optional')
     ap.add_argument('--id', help='report id, default = date of the last logged set')
-    ap.add_argument('--since', help='YYYY-MM-DD: only analyse sets from this day on')
+    ap.add_argument('--since', help='YYYY-MM-DD: only analyse sets from this day on (key lifts still use the whole log)')
     a = ap.parse_args()
 
     ex, muscles = parse_library()
     data = json.load(open(os.path.expanduser(a.export)))
     sets = sorted(data['sets'], key=lambda s: s['ts'])
+    all_sets = [s for s in sets if s['ex'] in ex]   # whole log: key lifts are best-ever, not best-this-period
     if a.since:
         t0 = dt.datetime.fromisoformat(a.since).timestamp() * 1000
         sets = [s for s in sets if s['ts'] >= t0]
@@ -202,29 +204,39 @@ def main():
     ex_rows.sort(key=lambda r: -r['sets'])
     ex_by_id = {r['id']: r for r in ex_rows}
 
-    # ---------------- key lifts vs bodyweight
+    # ---------------- key lifts vs bodyweight (best in the whole log, so a lift skipped this period
+    # still shows where it stands; `date` says when the best set was done)
+    best_all = {}
+    for s in all_sets:
+        if is_warm(s) or is_cluster(s) or MEASURE.get(s['ex'], 'reps') != 'reps':
+            continue
+        e = e1rm(s['w'], s['r'])
+        if e and e > best_all.get(s['ex'], (0,))[0]:
+            best_all[s['ex']] = (e, day(s).isoformat())
     key_lifts = []
     for key, (label, members, cuts) in STANDARDS.items():
         best = None
         for mem in members:
             eid, _, factor = mem.partition(':')
-            row = ex_by_id.get(eid)
-            if row and row['bestE1rm']:
-                est = row['bestE1rm'] * float(factor or 1)
-                if not best or est > best['estimate']:
-                    best = {'from': eid, 'fromName': row['name'], 'e1rm': row['bestE1rm'], 'estimate': r1(est),
-                            'converted': bool(factor)}
+            if eid not in best_all:
+                continue
+            e, when = best_all[eid]
+            est = e * float(factor or 1)
+            # A real lift beats an estimate converted from a variant, even if the estimate is higher.
+            if not best or (best['converted'] and not factor) or (bool(factor) == best['converted'] and est > best['estimate']):
+                best = {'from': eid, 'fromName': ex[eid]['name'], 'e1rm': r1(e), 'estimate': r1(est),
+                        'converted': bool(factor), 'date': when, 'inPeriod': when >= first.isoformat()}
         entry = {'key': key, 'label': label, 'standards': cuts}
         if best:
             ratio = best['estimate'] / bw
             level = sum(ratio >= c for c in cuts)
             entry.update(best, ratioBW=round(ratio, 2), level=LEVELS[level])
         key_lifts.append(entry)
-    pull = ex_by_id.get('pull-up') or ex_by_id.get('chin-up')
-    pullups = max([s['r'] for s in hard if s['ex'] in ('pull-up', 'chin-up') and s['w'] == 0] or [0])
-    key_lifts.append({'key': 'pullups', 'label': 'Bodyweight pull-ups (best set)', 'reps': pullups,
-                      'level': 'Beginner' if pullups < 1 else 'Novice' if pullups < 5 else 'Intermediate' if pullups < 13 else 'Advanced',
-                      'standards': [1, 5, 13], 'logged': bool(pull)})
+    pulls = [s for s in all_sets if s['ex'] in ('pull-up', 'chin-up') and s['w'] == 0 and not is_warm(s)]
+    pullups = max([s['r'] for s in pulls] or [0])
+    key_lifts.append({'key': 'pullups', 'label': 'Bodyweight pull-ups (best set)', 'reps': pullups, 'logged': bool(pulls),
+                      'level': None if not pulls else 'Beginner' if pullups < 1 else 'Novice' if pullups < 5 else 'Intermediate' if pullups < 13 else 'Advanced',
+                      'standards': [1, 5, 13], 'inPeriod': any(day(s) >= first for s in pulls)})
 
     # ---------------- body composition
     h = a.height / 100
@@ -252,17 +264,27 @@ def main():
         'tonnageKg': round(sum(s['w'] * s['r'] for s in hard if MEASURE.get(s['ex'], 'reps') == 'reps')),
     }
 
-    # ---------------- most frequent exercises and favourites
+    # ---------------- most frequent exercises (whole log: "what you do often") and favourites
     favs = [f for f in data.get('favs', []) if f in ex]
-    top = sorted(ex_rows, key=lambda r: (-r['sessions'], -r['sets'], r['name']))[:10]
-    top_exercises = [{'id': r['id'], 'name': r['name'], 'sets': r['sets'], 'sessions': r['sessions'],
-                      'sessionShare': round(100 * r['sessions'] / len(sessions)),
-                      'setShare': r1(100 * r['sets'] / len(hard)), 'bestSet': r['bestSet'], 'bestE1rm': r['bestE1rm'],
-                      'measure': r['measure'], 'lastDate': r['lastDate'], 'fav': r['id'] in favs} for r in top]
+    all_days = {day(s) for s in all_sets}
+    freq = defaultdict(list)
+    for s in all_sets:
+        if not is_warm(s):
+            freq[s['ex']].append(s)
+    top_exercises = []
+    for eid, ss in freq.items():
+        straight = [s for s in ss if not is_cluster(s)] or ss
+        best = max(straight, key=lambda s: (s['w'], s['r']))
+        top_exercises.append({'id': eid, 'name': ex[eid]['name'], 'sets': len(ss), 'sessions': len({day(s) for s in ss}),
+                              'sessionShare': round(100 * len({day(s) for s in ss}) / len(all_days)),
+                              'bestSet': [best['w'], best['r']], 'measure': MEASURE.get(eid, 'reps'),
+                              'lastDate': day(ss[-1]).isoformat(), 'fav': eid in favs})
+    top_exercises = sorted(top_exercises, key=lambda t: (-t['sessions'], -t['sets'], t['name']))[:10]
+    freq_span = {'from': min(all_days).isoformat(), 'to': max(all_days).isoformat(), 'sessions': len(all_days)}
 
     stats = {'id': rid, 'generated': dt.date.today().isoformat(), 'export': os.path.basename(a.export),
              'totals': totals, 'body': body, 'sessions': sessions, 'muscles': muscle_rows,
-             'exercises': ex_rows, 'topExercises': top_exercises, 'favourites': favs, 'keyLifts': key_lifts, 'volumeBand': VOLUME_BAND,
+             'exercises': ex_rows, 'topExercises': top_exercises, 'topExercisesSpan': freq_span, 'favourites': favs, 'keyLifts': key_lifts, 'volumeBand': VOLUME_BAND,
              'unknownExercises': unknown}
 
     out_dir = os.path.join(ROOT, 'reports', 'data')
@@ -294,15 +316,15 @@ def main():
     p('\nKey lifts (e1RM / bodyweight):')
     for k in key_lifts:
         if 'reps' in k:
-            p(f'  {k["label"]}: {k["reps"]} reps -> {k["level"]}')
+            p(f'  {k["label"]}: {k["reps"]} reps -> {k["level"] or "not logged"}')
         elif 'ratioBW' in k:
-            p(f'  {k["label"]}: {k["estimate"]} kg ({"from " + k["fromName"] + (" converted" if k["converted"] else "")}) = {k["ratioBW"]}x BW -> {k["level"]}')
+            p(f'  {k["label"]}: {k["estimate"]} kg ({"from " + k["fromName"] + (" converted" if k["converted"] else "")}, {k["date"]}{"" if k["inPeriod"] else ", before this period"}) = {k["ratioBW"]}x BW -> {k["level"]}')
         else:
             p(f'  {k["label"]}: not trained')
     p('\nMuscle hard sets per week (band low<6, high>20):')
     for m in muscle_rows:
         p(f'  {m["name"]:14s} {m["setsPerWeek"]:5.1f}/wk  {m["daysPerWeek"]:.1f} days/wk  {m["band"]}')
-    p('\nMost frequent (by sessions, then sets):')
+    p(f'\nMost frequent in the whole log ({freq_span["sessions"]} sessions since {freq_span["from"]}):')
     for t in top_exercises:
         p(f'  {t["name"]:30s} {t["sessions"]} sessions ({t["sessionShare"]}%), {t["sets"]} sets{"  [favourite]" if t["fav"] else ""}')
     if favs:
